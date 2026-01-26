@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { 
-  getAuth, 
-  GoogleAuthProvider, 
-  signInWithPopup, 
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
   signOut,
   onAuthStateChanged,
   createUserWithEmailAndPassword,
@@ -10,15 +10,15 @@ import {
   updateProfile,
   sendEmailVerification,
   sendPasswordResetEmail,
-  User 
+  User
 } from "firebase/auth";
-import { 
-  getFirestore, 
-  collection, 
-  doc, 
-  getDoc, 
-  setDoc, 
-  getDocs, 
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  getDocs,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -31,12 +31,12 @@ import { Product, UserRole, UserProfile } from "../types";
 const SYSTEM_ADMIN_EMAILS = ['latheeshk@gmail.com', 'latheeshkal202601@gmail.com'];
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCjkmHq3D2tBLoAh5Hs2gejgOfPbcInHFI",
-  authDomain: "pudava-8ca08.firebaseapp.com",
-  projectId: "pudava-8ca08",
-  storageBucket: "pudava-8ca08.firebasestorage.app",
-  messagingSenderId: "275974267753",
-  appId: "1:275974267753:web:462d14eea1afdc99df93f8"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
@@ -55,7 +55,7 @@ export const getUserRole = async (uid: string): Promise<UserRole> => {
   } catch (error) {
     console.warn("Could not fetch user role. Defaulting to 'user'.", error);
   }
-  return 'user'; 
+  return 'user';
 };
 
 export const getAllUsers = async (): Promise<UserProfile[]> => {
@@ -79,10 +79,10 @@ export const createUserDocument = async (user: User, role: UserRole = 'user') =>
     const snapshot = await getDoc(userRef);
     if (!snapshot.exists()) {
       const { email, displayName } = user;
-      
+
       const isSystemAdmin = email && SYSTEM_ADMIN_EMAILS.includes(email.toLowerCase());
       const finalRole = isSystemAdmin ? 'admin' : role;
-      
+
       await setDoc(userRef, {
         displayName,
         email,
@@ -96,23 +96,23 @@ export const createUserDocument = async (user: User, role: UserRole = 'user') =>
 };
 
 export const updateUserRole = async (uid: string, role: UserRole) => {
-    try {
-        const userRef = doc(db, "users", uid);
-        await updateDoc(userRef, { role });
-    } catch (error) {
-        console.error("Error updating user role:", error);
-        throw error;
-    }
+  try {
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, { role });
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    throw error;
+  }
 }
 
 export const deleteUserDocument = async (uid: string) => {
-    try {
-        const userRef = doc(db, "users", uid);
-        await deleteDoc(userRef);
-    } catch (error) {
-        console.error("Error deleting user document:", error);
-        throw error;
-    }
+  try {
+    const userRef = doc(db, "users", uid);
+    await deleteDoc(userRef);
+  } catch (error) {
+    console.error("Error deleting user document:", error);
+    throw error;
+  }
 }
 
 // --- Product Management ---
@@ -141,11 +141,11 @@ export const deleteProduct = async (id: string) => {
   await deleteDoc(productRef);
 };
 
-export { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  updateProfile, 
-  signInWithPopup, 
+export {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+  signInWithPopup,
   GoogleAuthProvider,
   signOut,
   sendEmailVerification,
@@ -186,16 +186,16 @@ export const seedProductsIfEmpty = async () => {
   try {
     const productsCol = collection(db, "products");
     let productSnapshot = await getDocs(productsCol);
-    
+
     if (productSnapshot.empty) {
       for (const prod of SAMPLE_PRODUCTS) {
-        await addDoc(productsCol, prod); 
+        await addDoc(productsCol, prod);
       }
       return true;
     }
     return false;
   } catch (error) {
-     console.warn("Seeding failed.", error);
-     return false;
+    console.warn("Seeding failed.", error);
+    return false;
   }
 };
