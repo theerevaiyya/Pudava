@@ -1,0 +1,5 @@
+{
+  "name": "Pudava",
+  "description": "A mobile-first, glassmorphic e-commerce application for the Pudava clothing brand, featuring role-based access control and real-time inventory.",
+  "requestFramePermissions": []
+}
