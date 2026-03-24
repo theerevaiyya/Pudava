@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { ToastProvider } from './components/Toast';
 import { Navbar } from './components/Navbar';
 import { CartSidebar } from './components/CartSidebar';
 import { Home } from './pages/Home';
@@ -12,6 +13,10 @@ import { Checkout } from './pages/Checkout';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
 import { About } from './pages/About';
+import { Orders } from './pages/Orders';
+import { OrderDetail } from './pages/OrderDetail';
+import { Wishlist } from './pages/Wishlist';
+import { Profile } from './pages/Profile';
 import { SplashScreen } from './components/SplashScreen';
 
 // Helper component to scroll top on route change
@@ -55,6 +60,10 @@ const AppContent: React.FC = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/about" element={<About />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/orders/:id" element={<OrderDetail />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
@@ -66,7 +75,9 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <CartProvider>
-        <AppContent />
+        <ToastProvider>
+          <AppContent />
+        </ToastProvider>
       </CartProvider>
     </AuthProvider>
   );

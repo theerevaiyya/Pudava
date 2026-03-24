@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { GlassCard } from '../components/GlassCard';
 import { Button } from '../components/Button';
-import { Mail, Lock, User as UserIcon, AlertCircle, CheckCircle, ArrowRight, Inbox } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, AlertCircle, CheckCircle, ArrowRight, Inbox, Eye, EyeOff } from 'lucide-react';
 
 export const Signup: React.FC = () => {
   const { signupWithEmail } = useAuth();
@@ -14,6 +14,22 @@ export const Signup: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const getPasswordStrength = (pw: string): { label: string; color: string; width: string } => {
+    if (!pw) return { label: '', color: '', width: '0%' };
+    let score = 0;
+    if (pw.length >= 6) score++;
+    if (pw.length >= 10) score++;
+    if (/[A-Z]/.test(pw)) score++;
+    if (/[0-9]/.test(pw)) score++;
+    if (/[^A-Za-z0-9]/.test(pw)) score++;
+    if (score <= 1) return { label: 'Weak', color: 'bg-red-500', width: '20%' };
+    if (score === 2) return { label: 'Fair', color: 'bg-orange-500', width: '40%' };
+    if (score === 3) return { label: 'Good', color: 'bg-yellow-500', width: '60%' };
+    if (score === 4) return { label: 'Strong', color: 'bg-green-500', width: '80%' };
+    return { label: 'Very Strong', color: 'bg-emerald-400', width: '100%' };
+  };
 
   const mapAuthError = (err: any) => {
     const code = err.code || err.message;
@@ -132,15 +148,27 @@ export const Signup: React.FC = () => {
             <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
                 <input 
-                    type="password" 
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Password (min 6 chars)"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-white/30 transition-colors"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-10 text-white placeholder-gray-500 focus:outline-none focus:border-white/30 transition-colors"
                 />
+                <button type="button" onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors w-8 h-8 flex items-center justify-center" aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
             </div>
+            {password && (
+                <div className="space-y-1">
+                    <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full transition-all duration-300 ${getPasswordStrength(password).color}`} style={{ width: getPasswordStrength(password).width }} />
+                    </div>
+                    <p className={`text-xs ${getPasswordStrength(password).color.replace('bg-', 'text-')}`}>{getPasswordStrength(password).label}</p>
+                </div>
+            )}
             <Button 
                 fullWidth 
                 type="submit"

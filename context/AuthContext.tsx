@@ -4,17 +4,22 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  updateProfile
+  updateProfile,
+  ConfirmationResult,
+  signInWithPopup,
+  signOut as firebaseSignOut,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  RecaptchaVerifier
 } from 'firebase/auth';
 import { 
   auth, 
   getUserRole, 
   createUserDocument, 
   updateUserRole, 
-  signInWithPopup, 
-  signOut as firebaseSignOut,
-  sendEmailVerification,
-  sendPasswordResetEmail
+  updateUserProfile,
+  setupRecaptcha,
+  sendOTP
 } from '../services/firebase';
 import { UserProfile } from '../types';
 
@@ -26,8 +31,11 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   loginWithEmail: (email: string, password: string) => Promise<void>;
   signupWithEmail: (email: string, password: string, name: string) => Promise<void>;
+  sendPhoneOTP: (phone: string) => Promise<ConfirmationResult>;
+  verifyPhoneOTP: (confirmationResult: ConfirmationResult, otp: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   signOutUser: () => Promise<void>;
+  updateProfile: (data: Partial<UserProfile>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -65,7 +73,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser({
           uid: firebaseUser.uid,
           email: firebaseUser.email,
+          phone: firebaseUser.phoneNumber || null,
           displayName: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL || null,
           role,
         });
       } else {
@@ -126,6 +136,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
   };
 
+  const sendPhoneOTP = async (phone: string): Promise<ConfirmationResult> => {
+    try {
+      const recaptcha = setupRecaptcha('recaptcha-container');
+      const confirmationResult = await sendOTP(phone, recaptcha);
+      return confirmationResult;
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      throw error;
+    }
+  };
+
+  const verifyPhoneOTP = async (confirmationResult: ConfirmationResult, otp: string) => {
+    try {
+      await confirmationResult.confirm(otp);
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      throw error;
+    }
+  };
+
   const resetPassword = async (email: string) => {
     try {
         await sendPasswordResetEmail(auth, email);
@@ -135,12 +165,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const handleUpdateProfile = async (data: Partial<UserProfile>) => {
+    if (!user) return;
+    await updateUserProfile(user.uid, data);
+    setUser(prev => prev ? { ...prev, ...data } : null);
+  };
+
   const signOutUser = async () => {
     await firebaseSignOut(auth);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, loginWithEmail, signupWithEmail, resetPassword, signOutUser }}>
+    <AuthContext.Provider value={{ 
+      user, loading, signInWithGoogle, loginWithEmail, signupWithEmail, 
+      sendPhoneOTP, verifyPhoneOTP, resetPassword, signOutUser,
+      updateProfile: handleUpdateProfile
+    }}>
       {children}
     </AuthContext.Provider>
   );
