@@ -26,6 +26,20 @@ export interface Address {
 
 export type ProductCategory = 'Men' | 'Women' | 'Kids' | 'Accessories';
 
+export type ClothingType =
+  | 'Saree' | 'Kurta' | 'Lehenga' | 'Salwar Kameez' | 'Dhoti' | 'Sherwani'
+  | 'Blouse' | 'Dupatta' | 'Palazzo' | 'Churidar' | 'Anarkali' | 'Kurti'
+  | 'Shirt' | 'Trouser' | 'Jacket' | 'Stole' | 'Other';
+
+export type FabricType =
+  | 'Silk' | 'Cotton' | 'Linen' | 'Chiffon' | 'Georgette' | 'Velvet'
+  | 'Satin' | 'Crepe' | 'Net' | 'Organza' | 'Rayon' | 'Polyester'
+  | 'Wool' | 'Jute' | 'Khadi' | 'Banarasi' | 'Chanderi' | 'Other';
+
+export type OccasionType =
+  | 'Casual' | 'Festive' | 'Wedding' | 'Party' | 'Office' | 'Bridal'
+  | 'Daily Wear' | 'Traditional' | 'Ceremonial' | 'Other';
+
 export interface ProductVariant {
   color: string;
   colorHex: string;
@@ -52,6 +66,22 @@ export interface Product {
   averageRating?: number;
   reviewCount?: number;
   createdAt?: any;
+
+  // Clothing-specific metadata
+  clothingType?: ClothingType;
+  fabric?: FabricType;
+  occasion?: OccasionType;
+  color?: string;
+  pattern?: string;       // e.g. 'Floral', 'Solid', 'Printed', 'Embroidered', 'Striped'
+  weight?: string;        // e.g. '350g', 'Lightweight'
+  careInstructions?: string;  // e.g. 'Dry Clean Only'
+  countryOfOrigin?: string;
+  brand?: string;
+  styleCode?: string;
+  length?: string;        // e.g. 'Knee Length', 'Floor Length', '2.5m'
+  work?: string;          // e.g. 'Zari', 'Embroidery', 'Sequin', 'Mirror Work'
+  transparency?: string;  // e.g. 'Opaque', 'Sheer', 'Semi-Sheer'
+  isPublished?: boolean;
 }
 
 export interface CartItem extends Product {

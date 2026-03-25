@@ -39,6 +39,14 @@ import {
   Timestamp
 } from "firebase/firestore";
 import { Product, UserRole, UserProfile, Address, Order, OrderItem, Review, WishlistItem, Coupon, Banner, Notification as AppNotification, OrderStatus } from "../types";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject,
+  UploadTaskSnapshot
+} from "firebase/storage";
 
 const SYSTEM_ADMIN_EMAILS = ['latheeshk@gmail.com', 'latheeshkal202601@gmail.com'];
 
@@ -54,6 +62,56 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export const storage = getStorage(app);
+
+// ========================================
+// IMAGE UPLOAD (Firebase Cloud Storage)
+// ========================================
+
+export type UploadProgressCallback = (progress: number) => void;
+
+export const uploadProductImage = async (
+  file: File,
+  productId: string,
+  onProgress?: UploadProgressCallback
+): Promise<string> => {
+  const ext = file.name.split('.').pop() || 'jpg';
+  const timestamp = Date.now();
+  const safeName = `${timestamp}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const storageRef = ref(storage, `products/${productId}/${safeName}`);
+
+  const uploadTask = uploadBytesResumable(storageRef, file, {
+    contentType: file.type,
+    customMetadata: { originalName: file.name },
+  });
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on(
+      'state_changed',
+      (snapshot: UploadTaskSnapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        onProgress?.(progress);
+      },
+      (error) => reject(error),
+      async () => {
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        resolve(downloadURL);
+      }
+    );
+  });
+};
+
+export const deleteProductImage = async (imageUrl: string): Promise<void> => {
+  try {
+    const imageRef = ref(storage, imageUrl);
+    await deleteObject(imageRef);
+  } catch (error: any) {
+    // If the file doesn't exist, that's fine
+    if (error.code !== 'storage/object-not-found') {
+      console.error('Error deleting image:', error);
+    }
+  }
+};
 
 // ========================================
 // PHONE AUTHENTICATION

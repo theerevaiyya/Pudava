@@ -3,10 +3,11 @@ import { useAuth } from '../context/AuthContext';
 import { GlassCard } from '../components/GlassCard';
 import { Button } from '../components/Button';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, AreaChart, Area } from 'recharts';
-import { Users, DollarSign, Package, TrendingUp, Settings, LogOut, Plus, Edit, Trash, Check, UserCircle, Shield, Briefcase, AlertTriangle, Filter, Lock, Activity } from 'lucide-react';
+import { Users, DollarSign, Package, TrendingUp, Settings, LogOut, Plus, Edit, Trash, Check, UserCircle, Shield, Briefcase, AlertTriangle, Filter, Lock, Activity, Search, Eye, EyeOff, MoreVertical } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getAllUsers, updateUserRole, deleteUserDocument, getProducts, saveProduct, deleteProduct } from '../services/firebase';
 import { UserProfile, UserRole, Product } from '../types';
+import { ProductForm } from '../components/ProductForm';
 
 const PROTECTED_ADMIN_EMAILS = ['latheeshk@gmail.com', 'latheeshkal202601@gmail.com'];
 
@@ -284,6 +285,188 @@ const UserManagement = () => {
     );
 };
 
+// ========================================
+// INVENTORY MANAGEMENT
+// ========================================
+const InventoryManagement = () => {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showForm, setShowForm] = useState(false);
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+
+    const fetchProducts = async () => {
+        setLoading(true);
+        try {
+            const data = await getProducts();
+            setProducts(data);
+        } catch (e) {
+            console.error('Error fetching products:', e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => { fetchProducts(); }, []);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Delete this product? This cannot be undone.')) return;
+        setDeletingId(id);
+        try {
+            await deleteProduct(id);
+            setProducts(prev => prev.filter(p => p.id !== id));
+        } catch (e) {
+            console.error('Error deleting product:', e);
+        }
+        setDeletingId(null);
+    };
+
+    const handleProductSaved = (product: Product) => {
+        if (editingProduct) {
+            setProducts(prev => prev.map(p => p.id === product.id ? product : p));
+        } else {
+            setProducts(prev => [product, ...prev]);
+        }
+        setShowForm(false);
+        setEditingProduct(null);
+    };
+
+    const filtered = products.filter(p =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.sku?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (showForm || editingProduct) {
+        return (
+            <InventoryFormWrapper
+                product={editingProduct}
+                onSave={handleProductSaved}
+                onCancel={() => { setShowForm(false); setEditingProduct(null); }}
+            />
+        );
+    }
+
+    if (loading) return (
+        <div className="py-32 text-center flex flex-col items-center gap-8">
+            <div className="w-16 h-16 border-[3px] border-pudava-primary border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-xs font-bold tracking-[0.3em] uppercase text-pudava-primary/60">Loading products...</p>
+        </div>
+    );
+
+    return (
+        <div className="space-y-8 animate-fade-in-blur">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 className="text-3xl md:text-4xl font-serif text-white">Product Catalog</h2>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mt-2">{products.length} Products</p>
+                </div>
+                <Button onClick={() => setShowForm(true)} variant="orchid" className="h-11 px-6">
+                    <span className="flex items-center gap-2"><Plus size={18} /> Add Product</span>
+                </Button>
+            </div>
+
+            {/* Search */}
+            <div className="relative max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
+                <input
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    placeholder="Search by name, SKU, or category..."
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-pudava-secondary/50 placeholder-gray-600"
+                />
+            </div>
+
+            {/* Product Grid */}
+            {filtered.length === 0 ? (
+                <div className="text-center py-20 glass-panel rounded-2xl">
+                    <Package size={48} className="mx-auto text-gray-700 mb-4" />
+                    <p className="text-gray-500 text-lg">{searchQuery ? 'No products match your search.' : 'No products yet. Add your first product!'}</p>
+                </div>
+            ) : (
+                <div className="grid gap-4 stagger-in">
+                    {filtered.map((product, idx) => (
+                        <GlassCard
+                            key={product.id}
+                            style={{ animationDelay: `${Math.min(idx * 0.05, 0.5)}s` }}
+                            className="p-4 flex items-center gap-4 group hover:border-white/10 transition-all"
+                        >
+                            {/* Thumbnail */}
+                            <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden bg-white/5 flex-shrink-0">
+                                {product.image ? (
+                                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-gray-600">
+                                        <Package size={24} />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <h4 className="text-sm md:text-base font-semibold text-white truncate">{product.name}</h4>
+                                    {product.isPublished === false && (
+                                        <span className="text-[10px] bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full font-bold">DRAFT</span>
+                                    )}
+                                    {product.isFeatured && (
+                                        <span className="text-[10px] bg-pudava-primary/20 text-pudava-primary px-2 py-0.5 rounded-full font-bold">FEATURED</span>
+                                    )}
+                                </div>
+                                <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                                    <span>{product.category}</span>
+                                    {product.clothingType && <span>· {product.clothingType}</span>}
+                                    {product.sku && <span>· {product.sku}</span>}
+                                </div>
+                            </div>
+
+                            {/* Price & Stock */}
+                            <div className="text-right flex-shrink-0 hidden md:block">
+                                <p className="text-sm font-bold text-white">₹{product.price.toLocaleString('en-IN')}</p>
+                                {product.originalPrice && product.originalPrice > product.price && (
+                                    <p className="text-xs text-gray-500 line-through">₹{product.originalPrice.toLocaleString('en-IN')}</p>
+                                )}
+                            </div>
+
+                            <div className="text-right flex-shrink-0 hidden md:block">
+                                <p className={`text-sm font-semibold ${product.stock > 10 ? 'text-green-400' : product.stock > 0 ? 'text-yellow-400' : 'text-red-400'}`}>
+                                    {product.stock}
+                                </p>
+                                <p className="text-[10px] text-gray-600 uppercase">In Stock</p>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                                <button
+                                    onClick={() => setEditingProduct(product)}
+                                    className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 hover:text-pudava-secondary hover:bg-pudava-secondary/10 transition-colors"
+                                    title="Edit product"
+                                >
+                                    <Edit size={16} />
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(product.id)}
+                                    disabled={deletingId === product.id}
+                                    className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                                    title="Delete product"
+                                >
+                                    <Trash size={16} />
+                                </button>
+                            </div>
+                        </GlassCard>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
+const InventoryFormWrapper = ({ product, onSave, onCancel }: { product: Product | null; onSave: (p: Product) => void; onCancel: () => void }) => (
+    <ProductForm product={product} onSave={onSave} onCancel={onCancel} />
+);
+
 const UserProfileView = ({ user, signOutUser }: any) => (
     <div className="max-w-4xl mx-auto space-y-12 animate-fade-in-blur">
         <GlassCard className="p-16 md:p-24 text-center space-y-10 relative overflow-hidden border-t-4 border-t-pudava-primary/20">
@@ -396,11 +579,7 @@ export const Dashboard: React.FC = () => {
                 {activeTab === 'profile' && <UserProfileView user={user} signOutUser={signOutUser} />}
                 {activeTab === 'overview' && isAdmin && <AdminOverview />}
                 {activeTab === 'users' && isAdmin && <UserManagement />}
-                {activeTab === 'inventory' && isManager && (
-                    <div className="text-center py-40 font-serif italic text-4xl text-gray-700 animate-pulse">
-                        Inventory management coming soon...
-                    </div>
-                )}
+                {activeTab === 'inventory' && isManager && <InventoryManagement />}
             </div>
         </div>
     );
