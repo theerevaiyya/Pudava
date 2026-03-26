@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { GlassCard } from '../components/GlassCard';
@@ -8,6 +8,12 @@ import { CreditCard, MapPin, CheckCircle, ShieldCheck, Plus, Tag, X, Truck, Wall
 import { useNavigate } from 'react-router-dom';
 import { getUserAddresses, saveAddress, createOrder, validateCoupon, applyCoupon } from '../services/firebase';
 import { Address, Coupon, OrderItem } from '../types';
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 const DELIVERY_THRESHOLD = 999;
 const DELIVERY_FEE = 99;
@@ -73,41 +79,136 @@ export const Checkout: React.FC = () => {
         setShowNewAddress(false);
     };
 
+    const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID || '';
+
+    const loadRazorpayScript = useCallback((): Promise<boolean> => {
+        return new Promise((resolve) => {
+            if (window.Razorpay) { resolve(true); return; }
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    }, []);
+
+    const placeOrderInFirestore = async (paymentId?: string, razorpayOrderId?: string) => {
+        if (!user || !selectedAddress) return '';
+        const orderItems: OrderItem[] = cart.map(item => ({
+            productId: item.id,
+            name: item.name,
+            image: item.image,
+            price: item.price,
+            quantity: item.quantity,
+            size: item.selectedSize,
+            variant: item.selectedVariant,
+        }));
+
+        const isPaid = paymentMethod !== 'cod' && paymentId;
+        const id = await createOrder({
+            userId: user.uid,
+            items: orderItems,
+            subtotal: cartTotal,
+            discount,
+            deliveryFee,
+            total,
+            status: isPaid ? 'confirmed' : 'pending',
+            shippingAddress: selectedAddress,
+            paymentMethod,
+            paymentStatus: paymentMethod === 'cod' ? 'pending' : 'paid',
+            couponCode: appliedCoupon?.code,
+            razorpayPaymentId: paymentId,
+            razorpayOrderId: razorpayOrderId,
+        });
+
+        if (appliedCoupon) {
+            await applyCoupon(appliedCoupon.id);
+        }
+        return id;
+    };
+
     const handlePlaceOrder = async () => {
         if (!user || !selectedAddress || !user.emailVerified) return;
         setLoading(true);
         try {
-            const orderItems: OrderItem[] = cart.map(item => ({
-                productId: item.id,
-                name: item.name,
-                image: item.image,
-                price: item.price,
-                quantity: item.quantity,
-                size: item.selectedSize,
-                variant: item.selectedVariant,
-            }));
+            if (paymentMethod === 'cod') {
+                // Direct order for Cash on Delivery
+                const id = await placeOrderInFirestore();
+                setOrderId(id);
+                clearCart();
+                setStep(3);
+            } else {
+                // Online payment via Razorpay
+                const scriptLoaded = await loadRazorpayScript();
+                if (!scriptLoaded) {
+                    alert('Failed to load payment gateway. Please check your connection.');
+                    setLoading(false);
+                    return;
+                }
 
-            const id = await createOrder({
-                userId: user.uid,
-                items: orderItems,
-                subtotal: cartTotal,
-                discount,
-                deliveryFee,
-                total,
-                status: 'pending',
-                shippingAddress: selectedAddress,
-                paymentMethod,
-                paymentStatus: paymentMethod === 'cod' ? 'pending' : 'paid',
-                couponCode: appliedCoupon?.code,
-            });
+                // Create Razorpay order on server
+                const res = await fetch('/api/razorpay/create-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: total,
+                        currency: 'INR',
+                        receipt: `pudava_${Date.now()}`,
+                    }),
+                });
+                if (!res.ok) throw new Error('Failed to create payment order');
+                const razorpayOrder = await res.json();
 
-            if (appliedCoupon) {
-                await applyCoupon(appliedCoupon.id);
+                const options = {
+                    key: RAZORPAY_KEY,
+                    amount: razorpayOrder.amount,
+                    currency: razorpayOrder.currency,
+                    name: 'Pudava',
+                    description: `Order of ${cart.length} item(s)`,
+                    order_id: razorpayOrder.id,
+                    prefill: {
+                        name: user.displayName || '',
+                        email: user.email || '',
+                        contact: selectedAddress.phone || '',
+                    },
+                    theme: { color: '#ec4899' },
+                    handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
+                        try {
+                            // Verify payment on server
+                            const verifyRes = await fetch('/api/razorpay/verify', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(response),
+                            });
+                            const verification = await verifyRes.json();
+                            if (verification.verified) {
+                                const id = await placeOrderInFirestore(response.razorpay_payment_id, response.razorpay_order_id);
+                                setOrderId(id);
+                                clearCart();
+                                setStep(3);
+                            } else {
+                                alert('Payment verification failed. Please contact support.');
+                            }
+                        } catch (err) {
+                            console.error('Payment verification error:', err);
+                            alert('Payment verification failed. Please contact support.');
+                        }
+                        setLoading(false);
+                    },
+                    modal: {
+                        ondismiss: () => { setLoading(false); },
+                    },
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.on('payment.failed', (response: any) => {
+                    console.error('Payment failed:', response.error);
+                    alert(`Payment failed: ${response.error.description}. Please try again.`);
+                    setLoading(false);
+                });
+                rzp.open();
+                return; // Don't set loading(false) — handler/ondismiss will do it
             }
-
-            setOrderId(id);
-            clearCart();
-            setStep(3);
         } catch (err) {
             console.error('Order placement failed:', err);
         }

@@ -66,6 +66,26 @@ const AppContent: React.FC = () => {
               <Route path="/profile" element={<Profile />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+
+            {/* Global Footer */}
+            <footer className="border-t border-white/5 bg-pudava-surface/50 backdrop-blur-xl mt-8">
+              <div className="container mx-auto px-6 py-8 md:py-10">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="font-serif text-lg font-bold orchid-text-gradient">Pudava</span>
+                    <span className="text-xs text-gray-600">|</span>
+                    <span className="text-xs text-gray-500">Royal Ethnic Wear</span>
+                  </div>
+                  <p className="text-xs text-gray-500 text-center">
+                    &copy; {new Date().getFullYear()} Pudava by Theerevaiyya. All rights reserved.
+                  </p>
+                  <div className="flex items-center gap-5 text-xs text-gray-600">
+                    <a href="#/about" className="hover:text-pudava-primary transition-colors">About</a>
+                    <a href="#/catalog" className="hover:text-pudava-primary transition-colors">Shop</a>
+                  </div>
+                </div>
+              </div>
+            </footer>
           </div>
         </Router>
     );

@@ -308,14 +308,16 @@ export const getNewArrivals = async (count = 8): Promise<Product[]> => {
 };
 
 export const saveProduct = async (product: Partial<Product> & { id?: string }) => {
+  // Strip undefined values — Firestore rejects them
+  const clean = Object.fromEntries(Object.entries(product).filter(([_, v]) => v !== undefined));
   const productsCol = collection(db, 'products');
-  if (product.id) {
-    const productRef = doc(db, 'products', product.id);
-    const { id, ...data } = product;
+  if (clean.id) {
+    const productRef = doc(db, 'products', clean.id as string);
+    const { id, ...data } = clean;
     await updateDoc(productRef, data);
-    return product.id;
+    return clean.id as string;
   } else {
-    const docRef = await addDoc(productsCol, { ...product, createdAt: serverTimestamp(), stock: product.stock ?? 0, averageRating: 0, reviewCount: 0 });
+    const docRef = await addDoc(productsCol, { ...clean, createdAt: serverTimestamp(), stock: (clean as any).stock ?? 0, averageRating: 0, reviewCount: 0 });
     return docRef.id;
   }
 };
@@ -371,8 +373,10 @@ export const deleteAddress = async (id: string) => {
 // ========================================
 
 export const createOrder = async (orderData: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+  // Strip undefined values — Firestore rejects them
+  const clean = JSON.parse(JSON.stringify(orderData));
   const docRef = await addDoc(collection(db, 'orders'), {
-    ...orderData,
+    ...clean,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });

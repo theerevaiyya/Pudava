@@ -115,6 +115,8 @@ export interface Order {
   shippingAddress: Address;
   paymentMethod: 'cod' | 'upi' | 'card' | 'netbanking';
   paymentStatus: 'pending' | 'paid' | 'refunded';
+  razorpayPaymentId?: string;
+  razorpayOrderId?: string;
   trackingId?: string;
   couponCode?: string;
   note?: string;

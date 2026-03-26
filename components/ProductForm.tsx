@@ -37,6 +37,46 @@ const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', 'Free Size'];
 
 const TEMP_PRODUCT_ID = () => `temp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
+// ── Reusable form components (defined outside to prevent focus loss on re-render) ──
+const FormInput = ({ label, value, onChange, type = 'text', placeholder, required, className = '' }: {
+  label: string; value: string; onChange: (v: string) => void; type?: string;
+  placeholder?: string; required?: boolean; className?: string;
+}) => (
+  <div className={className}>
+    <label className="block text-xs text-gray-400 mb-1.5">{label}{required && <span className="text-red-400">*</span>}</label>
+    <input
+      type={type}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-pudava-secondary/50 placeholder-gray-600 transition-colors"
+    />
+  </div>
+);
+
+const FormSelect = ({ label, value, onChange, options, placeholder, className = '' }: {
+  label: string; value: string; onChange: (v: string) => void;
+  options: readonly string[]; placeholder?: string; className?: string;
+}) => (
+  <div className={className}>
+    <label className="block text-xs text-gray-400 mb-1.5">{label}</label>
+    <select
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-pudava-secondary/50 transition-colors appearance-none"
+    >
+      <option value="" className="bg-pudava-bg">{placeholder || 'Select...'}</option>
+      {options.map(opt => (
+        <option key={opt} value={opt} className="bg-pudava-bg">{opt}</option>
+      ))}
+    </select>
+  </div>
+);
+
+const SectionTitle = ({ children }: { children: React.ReactNode }) => (
+  <h3 className="text-base font-semibold text-white mt-6 mb-3 pb-2 border-b border-white/5">{children}</h3>
+);
+
 interface ImageUploadState {
   file?: File;
   preview: string;
@@ -247,46 +287,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onCan
     }
   };
 
-  // ── Inline input component ──
-  const Input = ({ label, value, onChange, type = 'text', placeholder, required, className = '' }: {
-    label: string; value: string; onChange: (v: string) => void; type?: string;
-    placeholder?: string; required?: boolean; className?: string;
-  }) => (
-    <div className={className}>
-      <label className="block text-xs text-gray-400 mb-1.5">{label}{required && <span className="text-red-400">*</span>}</label>
-      <input
-        type={type}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-pudava-secondary/50 placeholder-gray-600 transition-colors"
-      />
-    </div>
-  );
-
-  const Select = ({ label, value, onChange, options, placeholder, className = '' }: {
-    label: string; value: string; onChange: (v: string) => void;
-    options: readonly string[]; placeholder?: string; className?: string;
-  }) => (
-    <div className={className}>
-      <label className="block text-xs text-gray-400 mb-1.5">{label}</label>
-      <select
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-pudava-secondary/50 transition-colors appearance-none"
-      >
-        <option value="" className="bg-pudava-bg">{placeholder || 'Select...'}</option>
-        {options.map(opt => (
-          <option key={opt} value={opt} className="bg-pudava-bg">{opt}</option>
-        ))}
-      </select>
-    </div>
-  );
-
-  const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-    <h3 className="text-base font-semibold text-white mt-6 mb-3 pb-2 border-b border-white/5">{children}</h3>
-  );
-
   return (
     <div className="space-y-4 animate-fade-in-blur">
       {/* Header */}
@@ -378,7 +378,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onCan
       <GlassCard className="p-5">
         <SectionTitle>Basic Information</SectionTitle>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input label="Product Name" value={name} onChange={setName} placeholder="e.g. Banarasi Silk Saree" required className="md:col-span-2" />
+          <FormInput label="Product Name" value={name} onChange={setName} placeholder="e.g. Banarasi Silk Saree" required className="md:col-span-2" />
           <div className="md:col-span-2">
             <label className="block text-xs text-gray-400 mb-1.5">Description<span className="text-red-400">*</span></label>
             <textarea
@@ -389,12 +389,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onCan
               className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-pudava-secondary/50 placeholder-gray-600 transition-colors resize-none"
             />
           </div>
-          <Input label="Selling Price (₹)" value={price} onChange={setPrice} type="number" placeholder="999" required />
-          <Input label="MRP / Original Price (₹)" value={originalPrice} onChange={setOriginalPrice} type="number" placeholder="1499" />
-          <Select label="Category" value={category} onChange={v => setCategory(v as ProductCategory)} options={CATEGORIES} />
-          <Input label="SKU" value={sku} onChange={setSku} placeholder="PUD-SAR-001" />
-          <Input label="Stock Quantity" value={stock} onChange={setStock} type="number" placeholder="50" required />
-          <Input label="Brand" value={brand} onChange={setBrand} placeholder="Pudava" />
+          <FormInput label="Selling Price (₹)" value={price} onChange={setPrice} type="number" placeholder="999" required />
+          <FormInput label="MRP / Original Price (₹)" value={originalPrice} onChange={setOriginalPrice} type="number" placeholder="1499" />
+          <FormSelect label="Category" value={category} onChange={v => setCategory(v as ProductCategory)} options={CATEGORIES} />
+          <FormInput label="SKU" value={sku} onChange={setSku} placeholder="PUD-SAR-001" />
+          <FormInput label="Stock Quantity" value={stock} onChange={setStock} type="number" placeholder="50" required />
+          <FormInput label="Brand" value={brand} onChange={setBrand} placeholder="Pudava" />
         </div>
       </GlassCard>
 
@@ -402,18 +402,18 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onCan
       <GlassCard className="p-5">
         <SectionTitle>Clothing Details</SectionTitle>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Select label="Clothing Type" value={clothingType} onChange={v => setClothingType(v as ClothingType)} options={CLOTHING_TYPES} placeholder="Select type..." />
-          <Select label="Fabric" value={fabric} onChange={v => setFabric(v as FabricType)} options={FABRIC_TYPES} placeholder="Select fabric..." />
-          <Select label="Occasion" value={occasion} onChange={v => setOccasion(v as OccasionType)} options={OCCASION_TYPES} placeholder="Select occasion..." />
-          <Input label="Color" value={color} onChange={setColor} placeholder="e.g. Maroon, Gold" />
-          <Select label="Pattern" value={pattern} onChange={setPattern} options={PATTERNS} placeholder="Select pattern..." />
-          <Select label="Work / Embellishment" value={work} onChange={setWork} options={WORK_TYPES} placeholder="Select work..." />
-          <Input label="Length" value={length} onChange={setLength} placeholder="e.g. 5.5m, Floor Length" />
-          <Input label="Weight" value={weight} onChange={setWeight} placeholder="e.g. 350g" />
-          <Select label="Transparency" value={transparency} onChange={setTransparency} options={['Opaque', 'Semi-Sheer', 'Sheer']} placeholder="Select..." />
-          <Input label="Style Code" value={styleCode} onChange={setStyleCode} placeholder="e.g. BNR-SLK-2024" />
-          <Input label="Country of Origin" value={countryOfOrigin} onChange={setCountryOfOrigin} placeholder="India" />
-          <Select label="Care Instructions" value={careInstructions} onChange={setCareInstructions} options={CARE_OPTIONS} placeholder="Select..." />
+          <FormSelect label="Clothing Type" value={clothingType} onChange={v => setClothingType(v as ClothingType)} options={CLOTHING_TYPES} placeholder="Select type..." />
+          <FormSelect label="Fabric" value={fabric} onChange={v => setFabric(v as FabricType)} options={FABRIC_TYPES} placeholder="Select fabric..." />
+          <FormSelect label="Occasion" value={occasion} onChange={v => setOccasion(v as OccasionType)} options={OCCASION_TYPES} placeholder="Select occasion..." />
+          <FormInput label="Color" value={color} onChange={setColor} placeholder="e.g. Maroon, Gold" />
+          <FormSelect label="Pattern" value={pattern} onChange={setPattern} options={PATTERNS} placeholder="Select pattern..." />
+          <FormSelect label="Work / Embellishment" value={work} onChange={setWork} options={WORK_TYPES} placeholder="Select work..." />
+          <FormInput label="Length" value={length} onChange={setLength} placeholder="e.g. 5.5m, Floor Length" />
+          <FormInput label="Weight" value={weight} onChange={setWeight} placeholder="e.g. 350g" />
+          <FormSelect label="Transparency" value={transparency} onChange={setTransparency} options={['Opaque', 'Semi-Sheer', 'Sheer']} placeholder="Select..." />
+          <FormInput label="Style Code" value={styleCode} onChange={setStyleCode} placeholder="e.g. BNR-SLK-2024" />
+          <FormInput label="Country of Origin" value={countryOfOrigin} onChange={setCountryOfOrigin} placeholder="India" />
+          <FormSelect label="Care Instructions" value={careInstructions} onChange={setCareInstructions} options={CARE_OPTIONS} placeholder="Select..." />
         </div>
       </GlassCard>
 

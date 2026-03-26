@@ -37,17 +37,18 @@ export const ProductDetail: React.FC = () => {
                 if (p.sizes && p.sizes.length > 0) setSelectedSize(p.sizes[0]);
                 setCurrentImageIndex(0);
 
-                // Fetch related
-                const [revs, related] = await Promise.all([
-                    getProductReviews(id),
-                    getProductsByCategory(p.category, 5),
-                ]);
-                setReviews(revs);
-                setRelatedProducts(related.filter(r => r.id !== id).slice(0, 4));
+                // Fetch related — don't let sub-query failures block the page
+                try {
+                    const [revs, related] = await Promise.all([
+                        getProductReviews(id).catch(() => []),
+                        p.category ? getProductsByCategory(p.category, 5).catch(() => []) : Promise.resolve([]),
+                    ]);
+                    setReviews(revs);
+                    setRelatedProducts(related.filter(r => r.id !== id).slice(0, 4));
+                } catch { /* reviews/related are non-critical */ }
 
                 if (user) {
-                    const w = await isInWishlist(user.uid, id);
-                    setInWishlist(w);
+                    try { const w = await isInWishlist(user.uid, id); setInWishlist(w); } catch {}
                 }
             } else {
                 navigate('/catalog');

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { GlassCard } from '../components/GlassCard';
 import { Button } from '../components/Button';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,99 @@ import { getFeaturedProducts, getNewArrivals, getActiveBanners } from '../servic
 import { Product, Banner } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { addToWishlist, removeFromWishlist, isInWishlist } from '../services/firebase';
+
+// Floating animated particles — layered for depth
+const FloatingParticles: React.FC = () => {
+  const particles = useMemo(() =>
+    Array.from({ length: 24 }, (_, i) => {
+      const layer = i < 8 ? 'far' : i < 18 ? 'mid' : 'near';
+      const baseSize = layer === 'far' ? 2 : layer === 'mid' ? 3.5 : 5;
+      const sizeVariance = layer === 'far' ? 1 : layer === 'mid' ? 2 : 3;
+      const size = baseSize + Math.random() * sizeVariance;
+      const colors = ['#ec4899', '#a855f7', '#d946ef', '#f472b6', '#c084fc'];
+      return {
+        id: i,
+        size,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        // Slower = further away, creates parallax feel
+        duration: layer === 'far' ? 35 + Math.random() * 20 : layer === 'mid' ? 22 + Math.random() * 12 : 14 + Math.random() * 8,
+        delay: Math.random() * -30,
+        opacity: layer === 'far' ? 0.08 + Math.random() * 0.06 : layer === 'mid' ? 0.12 + Math.random() * 0.1 : 0.15 + Math.random() * 0.15,
+        color: colors[i % colors.length],
+        blur: layer === 'far' ? 2 : layer === 'mid' ? 1 : 0,
+        animName: `particleDrift${(i % 4) + 1}`,
+        // Subtle pulsing for sparkle effect
+        pulseSpeed: 3 + Math.random() * 4,
+      };
+    }), []
+  );
+
+  return (
+    <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 1 }}>
+      {particles.map(p => (
+        <div
+          key={p.id}
+          className="absolute rounded-full"
+          style={{
+            width: p.size,
+            height: p.size,
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            background: p.color,
+            boxShadow: `0 0 ${p.size * 2}px ${p.color}40`,
+            opacity: p.opacity,
+            animation: `${p.animName} ${p.duration}s cubic-bezier(0.37, 0, 0.63, 1) ${p.delay}s infinite, particlePulse ${p.pulseSpeed}s ease-in-out infinite`,
+            filter: `blur(${p.blur}px)`,
+            willChange: 'transform, opacity',
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+// Animated gradient orbs — large ambient light sources
+const GradientOrbs: React.FC = () => (
+  <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+    {/* Primary warm orb — top left drift */}
+    <div className="absolute w-[45vw] h-[45vw] max-w-[700px] max-h-[700px] rounded-full"
+      style={{
+        top: '-10%', left: '-8%',
+        background: 'radial-gradient(circle at 40% 40%, rgba(236, 72, 153, 0.12), rgba(236, 72, 153, 0.04) 50%, transparent 70%)',
+        animation: 'orbDrift1 30s cubic-bezier(0.37, 0, 0.63, 1) infinite',
+        willChange: 'transform',
+      }}
+    />
+    {/* Secondary cool orb — bottom right */}
+    <div className="absolute w-[40vw] h-[40vw] max-w-[600px] max-h-[600px] rounded-full"
+      style={{
+        bottom: '-5%', right: '-5%',
+        background: 'radial-gradient(circle at 60% 60%, rgba(168, 85, 247, 0.10), rgba(168, 85, 247, 0.03) 50%, transparent 70%)',
+        animation: 'orbDrift2 36s cubic-bezier(0.37, 0, 0.63, 1) infinite',
+        willChange: 'transform',
+      }}
+    />
+    {/* Accent orb — center wanderer */}
+    <div className="absolute w-[35vw] h-[35vw] max-w-[550px] max-h-[550px] rounded-full"
+      style={{
+        top: '30%', left: '40%',
+        background: 'radial-gradient(circle at 50% 50%, rgba(217, 70, 239, 0.07), rgba(217, 70, 239, 0.02) 50%, transparent 70%)',
+        animation: 'orbDrift3 25s cubic-bezier(0.37, 0, 0.63, 1) infinite',
+        willChange: 'transform',
+      }}
+    />
+    {/* Subtle warm fill — very slow breathing */}
+    <div className="absolute w-[50vw] h-[50vw] max-w-[800px] max-h-[800px] rounded-full"
+      style={{
+        top: '50%', left: '20%',
+        background: 'radial-gradient(circle, rgba(244, 114, 182, 0.04), transparent 60%)',
+        animation: 'orbBreath 20s ease-in-out infinite',
+        willChange: 'transform, opacity',
+      }}
+    />
+  </div>
+);
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -58,16 +151,50 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div className="pb-24 md:pb-32">
+    <div className="pb-24 md:pb-32 relative">
+      {/* Global animated background */}
+      <FloatingParticles />
+      <GradientOrbs />
+
       {/* Cinematic Hero */}
       <section className="relative h-[85vh] md:h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-[#05010d]/60 z-10 backdrop-blur-[2px]"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#05010d] z-20"></div>
+          {/* Animated shimmer streaks over hero */}
+          <div className="absolute inset-0 z-[15] pointer-events-none overflow-hidden">
+            {/* Diagonal light sweep — primary */}
+            <div className="absolute w-[250%] h-[1px] top-[35%] -left-[75%]"
+              style={{
+                background: 'linear-gradient(90deg, transparent 0%, transparent 40%, rgba(236,72,153,0.15) 48%, rgba(236,72,153,0.25) 50%, rgba(236,72,153,0.15) 52%, transparent 60%, transparent 100%)',
+                animation: 'shimmerSweep 10s cubic-bezier(0.25, 0.1, 0.25, 1) infinite',
+                transform: 'rotate(-8deg)',
+              }} />
+            {/* Diagonal light sweep — secondary */}
+            <div className="absolute w-[250%] h-[1px] top-[62%] -left-[75%]"
+              style={{
+                background: 'linear-gradient(90deg, transparent 0%, transparent 40%, rgba(168,85,247,0.12) 48%, rgba(168,85,247,0.20) 50%, rgba(168,85,247,0.12) 52%, transparent 60%, transparent 100%)',
+                animation: 'shimmerSweep 14s cubic-bezier(0.25, 0.1, 0.25, 1) 4s infinite',
+                transform: 'rotate(-5deg)',
+              }} />
+            {/* Vertical soft beam */}
+            <div className="absolute w-[1px] h-[250%] left-[30%] -top-[75%]"
+              style={{
+                background: 'linear-gradient(180deg, transparent 0%, transparent 42%, rgba(217,70,239,0.08) 48%, rgba(217,70,239,0.14) 50%, rgba(217,70,239,0.08) 52%, transparent 58%, transparent 100%)',
+                animation: 'shimmerSweepV 18s cubic-bezier(0.25, 0.1, 0.25, 1) 2s infinite',
+              }} />
+            {/* Wide atmospheric glow sweep */}
+            <div className="absolute w-[200%] h-[80px] top-[45%] -left-[50%] opacity-[0.03]"
+              style={{
+                background: 'linear-gradient(90deg, transparent 0%, transparent 35%, rgba(244,114,182,0.8) 50%, transparent 65%, transparent 100%)',
+                animation: 'shimmerSweep 16s cubic-bezier(0.25, 0.1, 0.25, 1) 7s infinite',
+                filter: 'blur(30px)',
+              }} />
+          </div>
           <img
             src="https://images.unsplash.com/photo-1583391733958-e026b143f282?q=80&w=1920&auto=format&fit=crop"
             className="w-full h-full object-cover animate-float-slow scale-110"
-            alt="Background"
+            alt=""
           />
         </div>
 
@@ -168,11 +295,11 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Modern Marquee */}
-      <div className="w-full py-6 md:py-12 overflow-hidden border-y border-white/5 backdrop-blur-3xl bg-white/[0.02]">
-        <div className="flex gap-12 md:gap-24 whitespace-nowrap overflow-x-auto no-scrollbar px-4 md:px-12">
-          {["Artisan Silk", "Hand-Embroidered", "Midnight Velvet", "Sustainable Luxe", "Ethically Sourced"].map((item, i) => (
-            <div key={i} className="flex items-center gap-3 md:gap-6 text-pudava-primary/60 uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-xs font-black italic">
+      {/* Modern Marquee — auto-scrolling */}
+      <div className="w-full py-6 md:py-12 overflow-hidden border-y border-white/5 backdrop-blur-3xl bg-white/[0.02] relative">
+        <div className="flex gap-12 md:gap-24 whitespace-nowrap animate-marquee">
+          {["Artisan Silk", "Hand-Embroidered", "Midnight Velvet", "Sustainable Luxe", "Ethically Sourced", "Artisan Silk", "Hand-Embroidered", "Midnight Velvet", "Sustainable Luxe", "Ethically Sourced"].map((item, i) => (
+            <div key={i} className="flex items-center gap-3 md:gap-6 text-pudava-primary/60 uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-xs font-black italic flex-shrink-0">
               <Sparkles size={12} className="text-pudava-primary animate-pulse" />
               <span>{item}</span>
             </div>

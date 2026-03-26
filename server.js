@@ -1,8 +1,11 @@
+import 'dotenv/config';
 import express from 'express';
+import crypto from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import Razorpay from 'razorpay';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -70,7 +73,58 @@ app.post('/api/s3/delete', requireUploadSecret, async (req, res) => {
 
 // ---------- Static Files ----------
 app.use(express.static(path.join(__dirname, 'dist')));
-app.get('*', (_req, res) => {
+
+// ---------- Razorpay ----------
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+// Create a Razorpay order
+app.post('/api/razorpay/create-order', async (req, res) => {
+  try {
+    const { amount, currency, receipt } = req.body;
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ error: 'Valid amount is required' });
+    }
+    const options = {
+      amount: Math.round(amount * 100), // Razorpay expects paise
+      currency: currency || 'INR',
+      receipt: receipt || `rcpt_${Date.now()}`,
+    };
+    const order = await razorpay.orders.create(options);
+    res.json(order);
+  } catch (err) {
+    console.error('Razorpay create order error:', err);
+    res.status(500).json({ error: 'Failed to create payment order' });
+  }
+});
+
+// Verify Razorpay payment signature
+app.post('/api/razorpay/verify', (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ error: 'Missing payment verification fields' });
+    }
+    const body = razorpay_order_id + '|' + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .update(body)
+      .digest('hex');
+
+    if (expectedSignature === razorpay_signature) {
+      res.json({ verified: true });
+    } else {
+      res.status(400).json({ verified: false, error: 'Invalid signature' });
+    }
+  } catch (err) {
+    console.error('Razorpay verify error:', err);
+    res.status(500).json({ error: 'Payment verification failed' });
+  }
+});
+
+app.get('/{*splat}', (_req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
