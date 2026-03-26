@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { GlassCard } from '../components/GlassCard';
 import { Button } from '../components/Button';
 import { AddressCard } from '../components/AddressCard';
-import { CreditCard, MapPin, CheckCircle, ShieldCheck, Plus, Tag, X, Truck, Wallet, Banknote, Smartphone } from 'lucide-react';
+import { CreditCard, MapPin, CheckCircle, ShieldCheck, Plus, Tag, X, Truck, Wallet, Banknote, Smartphone, AlertCircle, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getUserAddresses, saveAddress, createOrder, validateCoupon, applyCoupon } from '../services/firebase';
 import { Address, Coupon, OrderItem } from '../types';
@@ -74,7 +74,7 @@ export const Checkout: React.FC = () => {
     };
 
     const handlePlaceOrder = async () => {
-        if (!user || !selectedAddress) return;
+        if (!user || !selectedAddress || !user.emailVerified) return;
         setLoading(true);
         try {
             const orderItems: OrderItem[] = cart.map(item => ({
@@ -119,6 +119,24 @@ export const Checkout: React.FC = () => {
             <div className="min-h-screen flex flex-col items-center justify-center px-4 text-center page-enter">
                 <h2 className="text-xl font-bold mb-4">Your cart is empty</h2>
                 <Button onClick={() => navigate('/catalog')}>Browse Collection</Button>
+            </div>
+        );
+    }
+
+    if (user && !user.emailVerified) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center px-4 text-center page-enter">
+                <GlassCard className="p-8 max-w-md w-full flex flex-col items-center">
+                    <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mb-4">
+                        <Mail size={32} className="text-yellow-400" />
+                    </div>
+                    <h2 className="text-xl font-serif font-bold mb-2 text-white">Verify Your Email</h2>
+                    <p className="text-sm text-gray-400 mb-6">You need a verified email address to place orders. Please check your inbox for the verification link.</p>
+                    <div className="flex flex-col gap-3 w-full">
+                        <Button fullWidth onClick={() => navigate('/profile')} variant="orchid">Go to Profile</Button>
+                        <Button fullWidth onClick={() => navigate('/catalog')} variant="secondary">Continue Shopping</Button>
+                    </div>
+                </GlassCard>
             </div>
         );
     }

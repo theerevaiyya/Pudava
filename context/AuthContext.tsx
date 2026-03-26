@@ -77,6 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           displayName: firebaseUser.displayName,
           photoURL: firebaseUser.photoURL || null,
           role,
+          emailVerified: firebaseUser.emailVerified || firebaseUser.providerData[0]?.providerId === 'google.com',
         });
       } else {
         setUser(null);

@@ -7,6 +7,7 @@ export interface UserProfile {
   displayName: string | null;
   photoURL: string | null;
   role: UserRole;
+  emailVerified: boolean;
   createdAt?: any;
 }
 
