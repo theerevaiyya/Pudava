@@ -68,8 +68,8 @@ const AppContent: React.FC = () => {
             </Routes>
 
             {/* Global Footer */}
-            <footer className="border-t border-white/5 bg-pudava-surface/50 backdrop-blur-xl mt-8">
-              <div className="container mx-auto px-6 py-8 md:py-10">
+            <footer className="border-t border-white/5 bg-pudava-surface/50 backdrop-blur-xl mt-4">
+              <div className="container mx-auto px-6 py-5 md:py-6">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
                     <span className="font-serif text-lg font-bold orchid-text-gradient">Pudava</span>

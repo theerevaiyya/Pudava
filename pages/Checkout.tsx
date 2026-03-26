@@ -250,11 +250,11 @@ export const Checkout: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen pt-16 md:pt-24 pb-24 px-4 md:px-8 max-w-4xl mx-auto page-enter">
-            <h1 className="text-xl md:text-2xl font-serif font-bold mb-6 text-center text-white">Checkout</h1>
+        <div className="min-h-screen pt-14 md:pt-18 pb-20 px-4 md:px-8 max-w-4xl mx-auto page-enter">
+            <h1 className="text-xl md:text-2xl font-serif font-bold mb-4 text-center text-white">Checkout</h1>
 
             {/* Progress Steps */}
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-5">
                 <div className="flex items-center gap-2 md:gap-4">
                     {[
                         { n: 1, label: 'Address' },

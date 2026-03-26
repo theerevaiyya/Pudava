@@ -114,7 +114,7 @@ export const ProductDetail: React.FC = () => {
         <div className="min-h-screen pb-20 md:pb-0 bg-pudava-bg page-enter">
             <div className="md:grid md:grid-cols-2 min-h-screen">
                 {/* Image Section with carousel */}
-                <div className="relative h-[50vh] md:h-screen md:sticky md:top-0 w-full overflow-hidden bg-gray-900">
+                <div className="relative h-[45vh] md:h-screen md:sticky md:top-0 w-full overflow-hidden bg-gray-900">
                     <button
                         onClick={() => navigate(-1)}
                         className="absolute top-3 left-3 md:top-4 md:left-4 z-20 w-10 h-10 md:w-11 md:h-11 flex items-center justify-center bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-black/70 transition-colors btn-press"
@@ -182,8 +182,8 @@ export const ProductDetail: React.FC = () => {
                 </div>
 
                 {/* Details Section */}
-                <div className="relative px-4 py-5 md:p-12 flex flex-col -mt-12 md:mt-0 z-10 bg-pudava-bg md:bg-transparent rounded-t-[2rem] md:rounded-none md:overflow-y-auto md:max-h-screen">
-                    <div className="max-w-md mx-auto w-full space-y-4 md:space-y-6 animate-slide-up">
+                <div className="relative px-4 py-4 md:p-8 flex flex-col -mt-12 md:mt-0 z-10 bg-pudava-bg md:bg-transparent rounded-t-[2rem] md:rounded-none md:overflow-y-auto md:max-h-screen">
+                    <div className="max-w-md mx-auto w-full space-y-3 md:space-y-4 animate-slide-up">
                         <div>
                             <div className="flex justify-between items-start mb-0.5 md:mb-1">
                                 <span className="text-pudava-secondary text-xs md:text-sm font-bold tracking-[0.1em] md:tracking-[0.15em] uppercase">{product.category}</span>
@@ -244,7 +244,7 @@ export const ProductDetail: React.FC = () => {
                         )}
 
                         {/* Actions */}
-                        <div className="pt-2 md:pt-4 space-y-3 md:space-y-4">
+                        <div className="pt-1 md:pt-2 space-y-2 md:space-y-3">
                             {product.stock !== undefined && product.stock <= 0 ? (
                                 <Button fullWidth variant="secondary" disabled className="h-11 md:h-12 text-xs md:text-sm opacity-50 cursor-not-allowed">
                                     Out of Stock
@@ -268,7 +268,7 @@ export const ProductDetail: React.FC = () => {
                         </div>
 
                         {/* Reviews Section */}
-                        <div className="pt-6 md:pt-8 border-t border-white/5">
+                        <div className="pt-4 md:pt-5 border-t border-white/5">
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="text-base md:text-lg font-serif">Reviews ({reviews.length})</h3>
                                 {user && (

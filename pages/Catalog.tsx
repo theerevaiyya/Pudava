@@ -143,7 +143,7 @@ export const Catalog: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen pt-16 md:pt-20 pb-24 container mx-auto px-3 md:px-6 page-enter">
+        <div className="min-h-screen pt-14 md:pt-16 pb-20 container mx-auto px-3 md:px-6 page-enter">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 md:mb-8 gap-3 md:gap-4">
                 <div className="flex flex-col gap-0.5 md:gap-1">
                     <h1 className="text-2xl md:text-3xl font-serif">

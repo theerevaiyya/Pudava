@@ -111,15 +111,15 @@ export const Login: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center px-4 py-8 md:py-0 relative overflow-hidden bg-pudava-bg page-enter">
-            <div className="absolute top-[-20%] right-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-pudava-secondary/10 rounded-full filter blur-[100px] md:blur-[120px] animate-nebula-pulse"></div>
-            <div className="absolute bottom-[-20%] left-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-blue-900/10 rounded-full filter blur-[100px] md:blur-[120px]"></div>
+        <div className="min-h-screen flex items-center justify-center px-4 py-6 md:py-0 relative overflow-hidden bg-pudava-bg page-enter">
+            <div className="absolute top-[-20%] right-[-10%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-pudava-secondary/10 rounded-full filter blur-[100px] md:blur-[120px] animate-nebula-pulse"></div>
+            <div className="absolute bottom-[-20%] left-[-10%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-blue-900/10 rounded-full filter blur-[100px] md:blur-[120px]"></div>
 
             {/* Invisible recaptcha container */}
             <div id="recaptcha-container"></div>
 
-            <GlassCard className="w-full max-w-md p-6 md:p-10 border-t border-white/20 animate-slide-up">
-                <div className="mb-6 md:mb-8 text-center">
+            <GlassCard className="w-full max-w-md p-5 md:p-8 border-t border-white/20 animate-slide-up">
+                <div className="mb-5 md:mb-6 text-center">
                     <h1 className="text-2xl md:text-3xl font-serif font-bold mb-1 md:mb-2 tracking-wide">Welcome Back</h1>
                     <p className="text-gray-400 text-xs md:text-sm">Sign in to access your account</p>
                 </div>

@@ -151,13 +151,13 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div className="pb-24 md:pb-32 relative">
+    <div className="pb-20 md:pb-8 relative">
       {/* Global animated background */}
       <FloatingParticles />
       <GradientOrbs />
 
       {/* Cinematic Hero */}
-      <section className="relative h-[85vh] md:h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative h-[70vh] md:h-[85vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-[#05010d]/60 z-10 backdrop-blur-[2px]"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#05010d] z-20"></div>
@@ -198,38 +198,38 @@ export const Home: React.FC = () => {
           />
         </div>
 
-        <div className="relative z-30 text-center px-5 md:px-4 max-w-5xl mx-auto flex flex-col items-center gap-5 md:gap-8 animate-fade-in-blur">
+        <div className="relative z-30 text-center px-5 md:px-4 max-w-5xl mx-auto flex flex-col items-center gap-3 md:gap-5 animate-fade-in-blur">
           <div className="inline-flex items-center gap-2 md:gap-3 px-4 md:px-6 py-1.5 md:py-2 border border-white/10 rounded-full text-[10px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-pudava-primary font-bold backdrop-blur-2xl bg-white/5 shadow-2xl">
             <Sparkles size={12} className="animate-pulse" /> Royal Orchid Edition
           </div>
-          <h1 className="text-5xl md:text-9xl font-serif font-bold leading-[0.95] text-white tracking-tighter">
+          <h1 className="text-4xl md:text-8xl font-serif font-bold leading-[0.95] text-white tracking-tighter">
             Royal <br />
             <span className="orchid-text-gradient italic">Reflections</span>
           </h1>
           <p className="text-sm md:text-xl text-gray-400 max-w-md md:max-w-2xl font-light leading-relaxed tracking-wide">
             A sanctuary of hand-woven masterpieces where timeless heritage meets modern silhouettes.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 md:gap-6 w-full sm:w-auto mt-2 md:mt-4">
-            <Button variant="orchid" onClick={() => navigate('/catalog')} className="px-8 md:px-12 h-12 md:h-14 text-sm btn-press">The Collection</Button>
-            <Button variant="secondary" onClick={() => navigate('/about')} className="px-8 md:px-12 h-12 md:h-14 text-sm btn-press">Our Story</Button>
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 w-full sm:w-auto mt-1 md:mt-2">
+            <Button variant="orchid" onClick={() => navigate('/catalog')} className="px-8 md:px-10 h-11 md:h-12 text-sm btn-press">The Collection</Button>
+            <Button variant="secondary" onClick={() => navigate('/about')} className="px-8 md:px-10 h-11 md:h-12 text-sm btn-press">Our Story</Button>
           </div>
         </div>
 
         {/* Floating scroll indicator - hidden on mobile */}
-        <div className="hidden md:flex absolute bottom-12 left-1/2 -translate-x-1/2 flex-col items-center gap-4 opacity-30">
+        <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 opacity-30">
           <span className="text-[8px] uppercase tracking-[0.4em]">Scroll</span>
-          <div className="w-px h-16 bg-gradient-to-b from-white to-transparent"></div>
+          <div className="w-px h-10 bg-gradient-to-b from-white to-transparent"></div>
         </div>
       </section>
 
       {/* Promotional Banners */}
       {banners.length > 0 && (
-        <section className="container mx-auto px-4 md:px-6 py-6 md:py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-            {banners.slice(0, 2).map((banner) => (
+        <section className="container mx-auto px-4 md:px-6 py-4 md:py-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+              {banners.slice(0, 2).map((banner) => (
               <div
                 key={banner.id}
-                className="relative overflow-hidden rounded-2xl md:rounded-3xl cursor-pointer group h-32 md:h-48 border border-white/5"
+                className="relative overflow-hidden rounded-2xl md:rounded-3xl cursor-pointer group h-28 md:h-40 border border-white/5"
                 onClick={() => banner.link && navigate(banner.link)}
               >
                 <img src={banner.image} alt={banner.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -245,8 +245,8 @@ export const Home: React.FC = () => {
       )}
 
       {/* Featured Categories */}
-      <section className="container mx-auto px-4 md:px-6 py-12 md:py-32">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 md:mb-20 gap-4 md:gap-8">
+      <section className="container mx-auto px-4 md:px-6 py-8 md:py-14">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-5 md:mb-8 gap-3 md:gap-6">
           <div className="reveal-container">
             <span className="text-pudava-primary font-black tracking-[0.2em] md:tracking-[0.3em] uppercase text-[10px] md:text-xs mb-1 md:mb-2 block">Curation</span>
             <h2 className="text-3xl md:text-6xl font-serif leading-none">Curated Realms</h2>
@@ -254,14 +254,14 @@ export const Home: React.FC = () => {
           <Button variant="ghost" onClick={() => navigate('/catalog')} className="border border-white/5 bg-white/5 px-6 md:px-8 h-10 md:h-auto text-xs btn-press">Explore <ArrowRight size={14} /></Button>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-12 gap-3 md:gap-8 md:h-[700px] stagger-in">
+        <div className="grid grid-cols-2 md:grid-cols-12 gap-3 md:gap-5 md:h-[480px] stagger-in">
           <div
-            className="col-span-2 md:col-span-8 relative group overflow-hidden rounded-2xl md:rounded-[2.5rem] cursor-pointer h-[200px] md:h-full border border-white/5 shadow-2xl card-glow"
+            className="col-span-2 md:col-span-8 relative group overflow-hidden rounded-2xl md:rounded-3xl cursor-pointer h-[200px] md:h-full border border-white/5 shadow-2xl card-glow"
             onClick={() => navigate('/catalog?filter=Women')}
           >
             <img src="https://images.unsplash.com/photo-1610030469983-98e55041d04f?q=80&w=1200" className="w-full h-full object-cover parallax-img" alt="Women" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#05010d] via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-700"></div>
-            <div className="absolute bottom-4 left-4 md:bottom-12 md:left-12">
+            <div className="absolute bottom-4 left-4 md:bottom-8 md:left-8">
               <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-3">
                 <div className="w-4 md:w-8 h-[1px] bg-pudava-primary"></div>
                 <span className="text-[10px] md:text-xs tracking-[0.2em] md:tracking-[0.3em] uppercase text-pudava-primary font-black">Empress Series</span>
@@ -270,9 +270,9 @@ export const Home: React.FC = () => {
             </div>
           </div>
 
-          <div className="col-span-1 md:col-span-4 flex flex-col gap-3 md:gap-8">
+          <div className="col-span-1 md:col-span-4 flex flex-col gap-3 md:gap-5">
             <div
-              className="flex-1 relative group overflow-hidden rounded-2xl md:rounded-[2.5rem] cursor-pointer border border-white/5 shadow-xl card-glow min-h-[140px]"
+              className="flex-1 relative group overflow-hidden rounded-2xl md:rounded-3xl cursor-pointer border border-white/5 shadow-xl card-glow min-h-[120px]"
               onClick={() => navigate('/catalog?filter=Men')}
             >
               <img src="https://images.unsplash.com/photo-1597983073493-88cd357a28e0?q=80&w=800" className="w-full h-full object-cover parallax-img" alt="Men" />
@@ -282,7 +282,7 @@ export const Home: React.FC = () => {
               </div>
             </div>
             <div
-              className="flex-1 relative group overflow-hidden rounded-2xl md:rounded-[2.5rem] cursor-pointer border border-white/5 shadow-xl card-glow min-h-[140px]"
+              className="flex-1 relative group overflow-hidden rounded-2xl md:rounded-3xl cursor-pointer border border-white/5 shadow-xl card-glow min-h-[120px]"
               onClick={() => navigate('/catalog?filter=Kids')}
             >
               <img src="https://images.unsplash.com/photo-1627885732159-4c8d28cb1745?q=80&w=800" className="w-full h-full object-cover parallax-img" alt="Kids" />
@@ -296,8 +296,8 @@ export const Home: React.FC = () => {
       </section>
 
       {/* Modern Marquee — auto-scrolling */}
-      <div className="w-full py-6 md:py-12 overflow-hidden border-y border-white/5 backdrop-blur-3xl bg-white/[0.02] relative">
-        <div className="flex gap-12 md:gap-24 whitespace-nowrap animate-marquee">
+      <div className="w-full py-4 md:py-6 overflow-hidden border-y border-white/5 backdrop-blur-3xl bg-white/[0.02] relative">
+        <div className="flex gap-8 md:gap-16 whitespace-nowrap animate-marquee">
           {["Artisan Silk", "Hand-Embroidered", "Midnight Velvet", "Sustainable Luxe", "Ethically Sourced", "Artisan Silk", "Hand-Embroidered", "Midnight Velvet", "Sustainable Luxe", "Ethically Sourced"].map((item, i) => (
             <div key={i} className="flex items-center gap-3 md:gap-6 text-pudava-primary/60 uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-xs font-black italic flex-shrink-0">
               <Sparkles size={12} className="text-pudava-primary animate-pulse" />
@@ -308,21 +308,21 @@ export const Home: React.FC = () => {
       </div>
 
       {/* Best Sellers */}
-      <section className="container mx-auto px-4 md:px-6 py-12 md:py-32">
-        <div className="flex items-center gap-4 md:gap-6 mb-8 md:mb-16">
+      <section className="container mx-auto px-4 md:px-6 py-8 md:py-14">
+        <div className="flex items-center gap-4 md:gap-6 mb-5 md:mb-8">
           <h2 className="text-2xl md:text-4xl font-serif">Aura Selection</h2>
           <div className="h-px flex-1 bg-gradient-to-r from-pudava-primary/30 to-transparent"></div>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-12 stagger-in">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 stagger-in">
           {bestSellers.slice(0, 3).map((product, idx) => (
             <div
               key={product.id}
-              className="group cursor-pointer flex flex-col bg-white/[0.02] p-3 md:p-5 rounded-xl md:rounded-[2.5rem] border border-white/5 hover:border-pudava-primary/30 transition-all duration-500 card-glow"
+              className="group cursor-pointer flex flex-col bg-white/[0.02] p-2.5 md:p-4 rounded-xl md:rounded-2xl border border-white/5 hover:border-pudava-primary/30 transition-all duration-500 card-glow"
               onClick={() => navigate(`/product/${product.id}`)}
               style={{ animationDelay: `${idx * 0.1}s` }}
             >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-lg md:rounded-[2rem] mb-3 md:mb-6">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-lg md:rounded-xl mb-2 md:mb-3">
                 <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 {product.isBestSeller && (
                   <div className="absolute top-3 left-3 bg-pudava-primary/90 backdrop-blur-sm text-white text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-full">Best Seller</div>
@@ -365,7 +365,7 @@ export const Home: React.FC = () => {
           ))}
         </div>
 
-        <div className="text-center mt-8 md:mt-12">
+        <div className="text-center mt-6 md:mt-8">
           <Button variant="ghost" onClick={() => navigate('/catalog')} className="border border-white/10 px-8 h-12 text-xs btn-press">
             View All Products <ArrowRight size={14} />
           </Button>
@@ -374,8 +374,8 @@ export const Home: React.FC = () => {
 
       {/* New Arrivals */}
       {newArrivals.length > 0 && (
-        <section className="container mx-auto px-4 md:px-6 py-8 md:py-20">
-          <div className="flex justify-between items-center mb-6 md:mb-12">
+        <section className="container mx-auto px-4 md:px-6 py-6 md:py-10">
+          <div className="flex justify-between items-center mb-4 md:mb-6">
             <div>
               <span className="text-pudava-secondary font-black tracking-[0.2em] uppercase text-[10px] md:text-xs mb-1 block">Just Arrived</span>
               <h2 className="text-2xl md:text-4xl font-serif">New Arrivals</h2>
@@ -411,7 +411,7 @@ export const Home: React.FC = () => {
       )}
 
       {/* Trust Badges */}
-      <section className="container mx-auto px-4 md:px-6 py-8 md:py-16">
+      <section className="container mx-auto px-4 md:px-6 py-6 md:py-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
           {[
             { icon: Truck, label: "Free Shipping", desc: "On orders above ₹999" },

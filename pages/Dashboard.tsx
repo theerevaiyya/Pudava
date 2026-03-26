@@ -23,51 +23,51 @@ const AdminOverview = () => {
     ];
     
     return (
-        <div className="space-y-12 animate-fade-in-blur">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <GlassCard className="p-10 relative overflow-hidden group border-l-[6px] border-l-pudava-primary">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-pudava-primary/10 rounded-full -mr-16 -mt-16 group-hover:bg-pudava-primary/20 transition-all"></div>
-                    <div className="flex items-center gap-8">
-                        <div className="p-5 bg-pudava-primary/10 rounded-3xl text-pudava-primary group-hover:scale-110 transition-transform">
-                            <DollarSign size={32} />
+        <div className="space-y-6 animate-fade-in-blur">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <GlassCard className="p-5 relative overflow-hidden group border-l-[4px] border-l-pudava-primary">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-pudava-primary/10 rounded-full -mr-12 -mt-12 group-hover:bg-pudava-primary/20 transition-all"></div>
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-pudava-primary/10 rounded-2xl text-pudava-primary group-hover:scale-110 transition-transform">
+                            <DollarSign size={24} />
                         </div>
                         <div>
-                            <p className="text-gray-500 text-xs uppercase font-bold tracking-[0.2em] mb-1">Gross Revenue</p>
-                            <h3 className="text-4xl font-serif">₹18.4L</h3>
+                            <p className="text-gray-500 text-[10px] uppercase font-bold tracking-[0.2em] mb-0.5">Gross Revenue</p>
+                            <h3 className="text-2xl font-serif">₹18.4L</h3>
                         </div>
                     </div>
                 </GlassCard>
-                <GlassCard className="p-10 relative overflow-hidden group border-l-[6px] border-l-pudava-secondary">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-pudava-secondary/10 rounded-full -mr-16 -mt-16 group-hover:bg-pudava-secondary/20 transition-all"></div>
-                    <div className="flex items-center gap-8">
-                        <div className="p-5 bg-pudava-secondary/10 rounded-3xl text-pudava-secondary group-hover:scale-110 transition-transform">
-                            <Users size={32} />
+                <GlassCard className="p-5 relative overflow-hidden group border-l-[4px] border-l-pudava-secondary">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-pudava-secondary/10 rounded-full -mr-12 -mt-12 group-hover:bg-pudava-secondary/20 transition-all"></div>
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-pudava-secondary/10 rounded-2xl text-pudava-secondary group-hover:scale-110 transition-transform">
+                            <Users size={24} />
                         </div>
                         <div>
-                            <p className="text-gray-500 text-xs uppercase font-bold tracking-[0.2em] mb-1">Total Users</p>
-                            <h3 className="text-4xl font-serif">1,842</h3>
+                            <p className="text-gray-500 text-[10px] uppercase font-bold tracking-[0.2em] mb-0.5">Total Users</p>
+                            <h3 className="text-2xl font-serif">1,842</h3>
                         </div>
                     </div>
                 </GlassCard>
-                <GlassCard className="p-10 relative overflow-hidden group border-l-[6px] border-l-pudava-accent">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-pudava-accent/10 rounded-full -mr-16 -mt-16 group-hover:bg-pudava-accent/20 transition-all"></div>
-                    <div className="flex items-center gap-8">
-                        <div className="p-5 bg-pudava-accent/10 rounded-3xl text-pudava-accent group-hover:scale-110 transition-transform">
-                            <Package size={32} />
+                <GlassCard className="p-5 relative overflow-hidden group border-l-[4px] border-l-pudava-accent">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-pudava-accent/10 rounded-full -mr-12 -mt-12 group-hover:bg-pudava-accent/20 transition-all"></div>
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-pudava-accent/10 rounded-2xl text-pudava-accent group-hover:scale-110 transition-transform">
+                            <Package size={24} />
                         </div>
                         <div>
-                            <p className="text-gray-500 text-xs uppercase font-bold tracking-[0.2em] mb-1">Pending Dispatch</p>
-                            <h3 className="text-4xl font-serif">52</h3>
+                            <p className="text-gray-500 text-[10px] uppercase font-bold tracking-[0.2em] mb-0.5">Pending Dispatch</p>
+                            <h3 className="text-2xl font-serif">52</h3>
                         </div>
                     </div>
                 </GlassCard>
             </div>
 
-            <GlassCard className="p-12">
-                <div className="flex items-center justify-between mb-12">
+            <GlassCard className="p-6">
+                <div className="flex items-center justify-between mb-6">
                     <div>
-                        <h3 className="text-3xl font-serif">Sales Overview</h3>
-                        <p className="text-xs text-gray-500 mt-2 uppercase tracking-[0.2em] font-bold">7-Day Transaction Cycle</p>
+                        <h3 className="text-xl font-serif">Sales Overview</h3>
+                        <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-[0.2em] font-bold">7-Day Transaction Cycle</p>
                     </div>
                     <div className="flex gap-4">
                         <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ const AdminOverview = () => {
                         </div>
                     </div>
                 </div>
-                <div style={{ width: '100%', height: 450 }}>
+                <div style={{ width: '100%', height: 280 }}>
                     <ResponsiveContainer>
                         <AreaChart data={data}>
                             <defs>
@@ -733,46 +733,46 @@ const OrderManagement = () => {
 };
 
 const UserProfileView = ({ user, signOutUser }: any) => (
-    <div className="max-w-4xl mx-auto space-y-12 animate-fade-in-blur">
-        <GlassCard className="p-16 md:p-24 text-center space-y-10 relative overflow-hidden border-t-4 border-t-pudava-primary/20">
-             <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-pudava-primary/5 to-transparent"></div>
+    <div className="max-w-4xl mx-auto space-y-6 animate-fade-in-blur">
+        <GlassCard className="p-6 md:p-10 text-center space-y-5 relative overflow-hidden border-t-4 border-t-pudava-primary/20">
+             <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-pudava-primary/5 to-transparent"></div>
              <div className="relative">
-                <div className="w-48 h-48 rounded-[3.5rem] bg-gradient-to-tr from-pudava-primary to-pudava-secondary mx-auto flex items-center justify-center text-6xl font-serif font-bold shadow-[0_30px_90px_rgba(236,72,153,0.3)] border-[8px] border-[#05010d] rotate-3 hover:rotate-0 transition-transform duration-700">
+                <div className="w-24 h-24 rounded-2xl bg-gradient-to-tr from-pudava-primary to-pudava-secondary mx-auto flex items-center justify-center text-3xl font-serif font-bold shadow-[0_20px_60px_rgba(236,72,153,0.3)] border-4 border-[#05010d] rotate-3 hover:rotate-0 transition-transform duration-700">
                     {user.displayName?.charAt(0) || 'U'}
                 </div>
-                <div className="mt-12 space-y-3">
-                    <h2 className="text-5xl font-serif text-white tracking-tight">{user.displayName}</h2>
-                    <p className="text-gray-500 font-light tracking-[0.1em]">{user.email}</p>
-                    <div className="mt-10 inline-flex items-center gap-3 px-8 py-3 rounded-full bg-white/5 border border-white/10 text-xs uppercase tracking-[0.3em] text-pudava-primary font-bold shadow-2xl">
-                        <Activity size={14} className="animate-pulse" /> {user.role}
+                <div className="mt-4 space-y-1.5">
+                    <h2 className="text-2xl font-serif text-white tracking-tight">{user.displayName}</h2>
+                    <p className="text-gray-500 text-sm font-light tracking-[0.1em]">{user.email}</p>
+                    <div className="mt-3 inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] uppercase tracking-[0.3em] text-pudava-primary font-bold shadow-2xl">
+                        <Activity size={12} className="animate-pulse" /> {user.role}
                     </div>
                 </div>
-                <div className="mt-16 flex flex-col sm:flex-row justify-center gap-6">
-                    <Button variant="orchid" className="px-14 h-14">Edit Profile</Button>
-                    <Button variant="secondary" onClick={signOutUser} className="px-14 h-14 text-red-400 border-red-500/20 hover:bg-red-500/10">Sign Out</Button>
+                <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+                    <Button variant="orchid" className="px-8 h-10 text-sm">Edit Profile</Button>
+                    <Button variant="secondary" onClick={signOutUser} className="px-8 h-10 text-sm text-red-400 border-red-500/20 hover:bg-red-500/10">Sign Out</Button>
                 </div>
             </div>
         </GlassCard>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <GlassCard className="p-10 group hover:border-pudava-primary/20 transition-all duration-700">
-                <h3 className="text-2xl font-serif mb-8 flex items-center gap-4">
-                    <Package size={28} className="text-pudava-primary" /> Order History
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <GlassCard className="p-5 group hover:border-pudava-primary/20 transition-all duration-700">
+                <h3 className="text-lg font-serif mb-4 flex items-center gap-3">
+                    <Package size={20} className="text-pudava-primary" /> Order History
                 </h3>
-                <div className="text-center py-24 text-gray-600 bg-black/40 rounded-[2rem] border border-white/5 italic font-light">
+                <div className="text-center py-10 text-gray-600 bg-black/40 rounded-xl border border-white/5 italic font-light text-sm">
                     Your order history will appear here.
                 </div>
             </GlassCard>
-            <GlassCard className="p-10 group hover:border-pudava-secondary/20 transition-all duration-700">
-                <h3 className="text-2xl font-serif mb-8 flex items-center gap-4">
-                    <Settings size={28} className="text-pudava-secondary" /> Settings
+            <GlassCard className="p-5 group hover:border-pudava-secondary/20 transition-all duration-700">
+                <h3 className="text-lg font-serif mb-4 flex items-center gap-3">
+                    <Settings size={20} className="text-pudava-secondary" /> Settings
                 </h3>
-                 <div className="space-y-6">
+                 <div className="space-y-2">
                     {["Push Notifications", "Language", "Currency"].map((setting, i) => (
-                         <div key={i} className="flex justify-between items-center p-6 hover:bg-white/5 rounded-[1.5rem] cursor-pointer group/item transition-all">
-                            <span className="text-gray-400 group-hover/item:text-white transition-colors font-medium tracking-wide">{setting}</span>
-                            <div className="w-14 h-7 bg-white/10 rounded-full relative transition-all overflow-hidden border border-white/5">
-                                <div className="w-5 h-5 bg-pudava-primary rounded-full absolute top-1 left-1 group-hover/item:left-8 transition-all shadow-lg"></div>
+                         <div key={i} className="flex justify-between items-center p-3 hover:bg-white/5 rounded-xl cursor-pointer group/item transition-all">
+                            <span className="text-gray-400 text-sm group-hover/item:text-white transition-colors font-medium tracking-wide">{setting}</span>
+                            <div className="w-10 h-5 bg-white/10 rounded-full relative transition-all overflow-hidden border border-white/5">
+                                <div className="w-3.5 h-3.5 bg-pudava-primary rounded-full absolute top-[3px] left-[3px] group-hover/item:left-[19px] transition-all shadow-lg"></div>
                             </div>
                         </div>
                     ))}
@@ -803,20 +803,20 @@ export const Dashboard: React.FC = () => {
     const isManager = user.role === 'manager' || user.role === 'admin';
 
     return (
-        <div className="container mx-auto px-6 py-16 mt-24 mb-40 md:mb-16">
+        <div className="container mx-auto px-4 md:px-6 py-8 mt-14 mb-20 md:mb-8">
             {/* Navigational Tabs */}
             {(isAdmin || isManager) && (
-                <div className="flex items-center gap-3 mb-20 bg-white/5 p-2 rounded-[2.5rem] w-fit mx-auto md:mx-0 overflow-x-auto no-scrollbar border border-white/5 backdrop-blur-3xl shadow-2xl">
+                <div className="flex items-center gap-2 mb-8 bg-white/5 p-1.5 rounded-2xl w-fit mx-auto md:mx-0 overflow-x-auto no-scrollbar border border-white/5 backdrop-blur-3xl shadow-2xl">
                     <button 
                         onClick={() => setActiveTab('profile')}
-                        className={`flex items-center gap-4 px-10 py-4 rounded-[2rem] text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === 'profile' ? 'orchid-gradient text-white shadow-2xl' : 'text-gray-500 hover:text-white'}`}
+                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === 'profile' ? 'orchid-gradient text-white shadow-2xl' : 'text-gray-500 hover:text-white'}`}
                     >
                         <UserCircle size={20} /> Profile
                     </button>
                     {isAdmin && (
                         <button 
                             onClick={() => setActiveTab('overview')}
-                            className={`flex items-center gap-4 px-10 py-4 rounded-[2rem] text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === 'overview' ? 'orchid-gradient text-white shadow-2xl' : 'text-gray-500 hover:text-white'}`}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === 'overview' ? 'orchid-gradient text-white shadow-2xl' : 'text-gray-500 hover:text-white'}`}
                         >
                             <TrendingUp size={20} /> Overview
                         </button>
@@ -824,7 +824,7 @@ export const Dashboard: React.FC = () => {
                     {isManager && (
                         <button 
                             onClick={() => setActiveTab('inventory')}
-                            className={`flex items-center gap-4 px-10 py-4 rounded-[2rem] text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === 'inventory' ? 'orchid-gradient text-white shadow-2xl' : 'text-gray-500 hover:text-white'}`}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === 'inventory' ? 'orchid-gradient text-white shadow-2xl' : 'text-gray-500 hover:text-white'}`}
                         >
                             <Briefcase size={20} /> Inventory
                         </button>
@@ -832,7 +832,7 @@ export const Dashboard: React.FC = () => {
                     {isManager && (
                         <button 
                             onClick={() => setActiveTab('orders')}
-                            className={`flex items-center gap-4 px-10 py-4 rounded-[2rem] text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === 'orders' ? 'orchid-gradient text-white shadow-2xl' : 'text-gray-500 hover:text-white'}`}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === 'orders' ? 'orchid-gradient text-white shadow-2xl' : 'text-gray-500 hover:text-white'}`}
                         >
                             <ClipboardList size={20} /> Orders
                         </button>
@@ -840,7 +840,7 @@ export const Dashboard: React.FC = () => {
                     {isAdmin && (
                         <button 
                             onClick={() => setActiveTab('users')}
-                            className={`flex items-center gap-4 px-10 py-4 rounded-[2rem] text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === 'users' ? 'orchid-gradient text-white shadow-2xl' : 'text-gray-500 hover:text-white'}`}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === 'users' ? 'orchid-gradient text-white shadow-2xl' : 'text-gray-500 hover:text-white'}`}
                         >
                             <Shield size={20} /> Users
                         </button>

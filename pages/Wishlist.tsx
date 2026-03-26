@@ -48,7 +48,7 @@ export const Wishlist: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pt-16 md:pt-24 pb-24 px-4 md:px-8 max-w-6xl mx-auto page-enter">
+    <div className="min-h-screen pt-14 md:pt-18 pb-20 px-4 md:px-8 max-w-6xl mx-auto page-enter">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <button onClick={() => navigate(-1)} className="p-2 rounded-full bg-white/5 text-white md:hidden">

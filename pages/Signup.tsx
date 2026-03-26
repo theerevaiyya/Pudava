@@ -64,15 +64,15 @@ export const Signup: React.FC = () => {
   if (isSuccess) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-pudava-bg">
-        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-pudava-secondary/10 rounded-full filter blur-[120px] animate-pulse"></div>
+        <div className="absolute top-[-20%] left-[-10%] w-[400px] h-[400px] bg-pudava-secondary/10 rounded-full filter blur-[120px] animate-pulse"></div>
         
-        <GlassCard className="w-full max-w-md p-8 md:p-10 border-t border-white/20 text-center flex flex-col items-center">
-            <div className="w-20 h-20 bg-pudava-secondary/20 rounded-full flex items-center justify-center mb-6 border border-pudava-secondary/30">
-                <Inbox size={40} className="text-pudava-secondary animate-bounce" />
+        <GlassCard className="w-full max-w-md p-5 md:p-8 border-t border-white/20 text-center flex flex-col items-center">
+            <div className="w-16 h-16 bg-pudava-secondary/20 rounded-full flex items-center justify-center mb-4 border border-pudava-secondary/30">
+                <Inbox size={32} className="text-pudava-secondary animate-bounce" />
             </div>
             
-            <h1 className="text-3xl font-serif font-bold mb-4 tracking-wide">Verify Your Email</h1>
-            <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+            <h1 className="text-2xl font-serif font-bold mb-3 tracking-wide">Verify Your Email</h1>
+            <p className="text-gray-300 text-sm mb-4 leading-relaxed">
                 We've sent a verification link to <span className="text-white font-bold">{email}</span>. 
                 Please click the link in your email to activate your account.
             </p>
@@ -95,7 +95,7 @@ export const Signup: React.FC = () => {
             
             <button 
                 onClick={() => setIsSuccess(false)} 
-                className="mt-8 text-xs text-gray-500 hover:text-white transition-colors"
+                className="mt-5 text-xs text-gray-500 hover:text-white transition-colors"
             >
                 Entered wrong email? Start over
             </button>
@@ -107,16 +107,16 @@ export const Signup: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-pudava-bg">
        {/* Background decorative elements */}
-       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-pudava-secondary/10 rounded-full filter blur-[120px] animate-pulse"></div>
+       <div className="absolute top-[-20%] left-[-10%] w-[400px] h-[400px] bg-pudava-secondary/10 rounded-full filter blur-[120px] animate-pulse"></div>
        
-      <GlassCard className="w-full max-w-md p-8 md:p-10 border-t border-white/20">
-        <div className="mb-8 text-center">
+      <GlassCard className="w-full max-w-md p-5 md:p-8 border-t border-white/20">
+        <div className="mb-5 text-center">
             <h1 className="text-3xl font-serif font-bold mb-2 tracking-wide">Create Account</h1>
             <p className="text-gray-400 text-sm">Join Pudava for exclusive access</p>
         </div>
 
         {error && (
-            <div className="mb-6 p-4 rounded-xl flex items-start gap-3 text-sm glass-panel border-l-4 border-l-red-500 bg-red-500/10 text-red-200">
+            <div className="mb-4 p-3 rounded-xl flex items-start gap-3 text-sm glass-panel border-l-4 border-l-red-500 bg-red-500/10 text-red-200">
                 <AlertCircle size={18} className="mt-0.5 shrink-0" />
                 <span>{error}</span>
             </div>
