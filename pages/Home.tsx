@@ -291,7 +291,7 @@ export const Home: React.FC = () => {
       <div className="pb-20 md:pb-8 relative" style={{ zIndex: 1 }}>
 
       {/* Cinematic Hero */}
-      <section className="relative h-[70vh] md:h-[85vh] flex items-center justify-center overflow-hidden">
+      <section className="hero-cinematic relative h-[55vh] md:h-[85vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-[#05010d]/60 z-10 backdrop-blur-[2px]"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#05010d] z-20"></div>

@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { GlassCard } from '../components/GlassCard';
 import { Button } from '../components/Button';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, AreaChart, Area } from 'recharts';
-import { Users, DollarSign, Package, TrendingUp, Settings, LogOut, Plus, Edit, Trash, Check, UserCircle, Shield, Briefcase, AlertTriangle, Filter, Lock, Activity, Search, Eye, EyeOff, MoreVertical, ClipboardList, ChevronDown, Truck, XCircle, ImageIcon, Upload, X } from 'lucide-react';
+import { Users, IndianRupee, Package, TrendingUp, Settings, LogOut, Plus, Edit, Trash, Check, UserCircle, Shield, Briefcase, AlertTriangle, Filter, Lock, Activity, Search, Eye, EyeOff, MoreVertical, ClipboardList, ChevronDown, Truck, XCircle, ImageIcon, Upload, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getAllUsers, updateUserRole, deleteUserDocument, getProducts, saveProduct, deleteProduct, getAllOrders, updateOrderStatus, getHomePageImages, saveHomePageImages, uploadHomeImage } from '../services/firebase';
 import { UserProfile, UserRole, Product, Order, OrderStatus, HomePageImages } from '../types';
@@ -12,16 +12,65 @@ import { ProductForm } from '../components/ProductForm';
 const PROTECTED_ADMIN_EMAILS = ['latheeshk@gmail.com', 'latheeshkal202601@gmail.com'];
 
 const AdminOverview = () => {
-    const data = [
-        { name: 'Mon', sales: 4000, users: 400 },
-        { name: 'Tue', sales: 3000, users: 300 },
-        { name: 'Wed', sales: 2000, users: 500 },
-        { name: 'Thu', sales: 2780, users: 600 },
-        { name: 'Fri', sales: 4890, users: 800 },
-        { name: 'Sat', sales: 6390, users: 950 },
-        { name: 'Sun', sales: 7490, users: 1100 },
-    ];
-    
+    const [revenue, setRevenue] = useState(0);
+    const [userCount, setUserCount] = useState(0);
+    const [pendingCount, setPendingCount] = useState(0);
+    const [chartData, setChartData] = useState<{ name: string; sales: number }[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const [orders, users] = await Promise.all([getAllOrders(), getAllUsers()]);
+                setUserCount(users.length);
+
+                // Revenue: sum total of all non-cancelled/returned orders
+                const validOrders = orders.filter(o => o.status !== 'cancelled' && o.status !== 'returned');
+                setRevenue(validOrders.reduce((sum, o) => sum + (o.total || 0), 0));
+
+                // Pending dispatch: orders that haven't shipped yet
+                setPendingCount(orders.filter(o => ['pending', 'confirmed', 'processing'].includes(o.status)).length);
+
+                // 7-day sales chart
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                const last7: { name: string; sales: number }[] = [];
+                const now = new Date();
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date(now);
+                    d.setDate(d.getDate() - i);
+                    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                    const dayEnd = new Date(dayStart.getTime() + 86400000);
+                    const dayTotal = validOrders.reduce((sum, o) => {
+                        const ts = o.createdAt?.toDate?.() ? o.createdAt.toDate() : (o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : null);
+                        if (ts && ts >= dayStart && ts < dayEnd) return sum + (o.total || 0);
+                        return sum;
+                    }, 0);
+                    last7.push({ name: dayNames[dayStart.getDay()], sales: dayTotal });
+                }
+                setChartData(last7);
+            } catch (e) {
+                console.error('Failed to load overview stats:', e);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchStats();
+    }, []);
+
+    const formatCurrency = (val: number) => {
+        if (val >= 10000000) return `₹${(val / 10000000).toFixed(1)}Cr`;
+        if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
+        if (val >= 1000) return `₹${(val / 1000).toFixed(1)}K`;
+        return `₹${val.toLocaleString('en-IN')}`;
+    };
+
+    if (loading) return (
+        <div className="py-32 text-center flex flex-col items-center gap-8">
+            <div className="w-16 h-16 border-[3px] border-pudava-primary border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-xs font-bold tracking-[0.3em] uppercase text-pudava-primary/60">Loading overview...</p>
+        </div>
+    );
+
     return (
         <div className="space-y-6 animate-fade-in-blur">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -29,11 +78,11 @@ const AdminOverview = () => {
                     <div className="absolute top-0 right-0 w-24 h-24 bg-pudava-primary/10 rounded-full -mr-12 -mt-12 group-hover:bg-pudava-primary/20 transition-all"></div>
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-pudava-primary/10 rounded-2xl text-pudava-primary group-hover:scale-110 transition-transform">
-                            <DollarSign size={24} />
+                            <IndianRupee size={24} />
                         </div>
                         <div>
                             <p className="text-gray-500 text-[10px] uppercase font-bold tracking-[0.2em] mb-0.5">Gross Revenue</p>
-                            <h3 className="text-2xl font-serif">₹18.4L</h3>
+                            <h3 className="text-2xl font-serif">{formatCurrency(revenue)}</h3>
                         </div>
                     </div>
                 </GlassCard>
@@ -45,7 +94,7 @@ const AdminOverview = () => {
                         </div>
                         <div>
                             <p className="text-gray-500 text-[10px] uppercase font-bold tracking-[0.2em] mb-0.5">Total Users</p>
-                            <h3 className="text-2xl font-serif">1,842</h3>
+                            <h3 className="text-2xl font-serif">{userCount.toLocaleString('en-IN')}</h3>
                         </div>
                     </div>
                 </GlassCard>
@@ -57,7 +106,7 @@ const AdminOverview = () => {
                         </div>
                         <div>
                             <p className="text-gray-500 text-[10px] uppercase font-bold tracking-[0.2em] mb-0.5">Pending Dispatch</p>
-                            <h3 className="text-2xl font-serif">52</h3>
+                            <h3 className="text-2xl font-serif">{pendingCount}</h3>
                         </div>
                     </div>
                 </GlassCard>
@@ -67,7 +116,7 @@ const AdminOverview = () => {
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h3 className="text-xl font-serif">Sales Overview</h3>
-                        <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-[0.2em] font-bold">7-Day Transaction Cycle</p>
+                        <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-[0.2em] font-bold">Last 7 Days</p>
                     </div>
                     <div className="flex gap-4">
                         <div className="flex items-center gap-2">
@@ -78,7 +127,7 @@ const AdminOverview = () => {
                 </div>
                 <div style={{ width: '100%', height: 280 }}>
                     <ResponsiveContainer>
-                        <AreaChart data={data}>
+                        <AreaChart data={chartData}>
                             <defs>
                                 <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#ec4899" stopOpacity={0.4}/>
@@ -92,6 +141,7 @@ const AdminOverview = () => {
                                 itemStyle={{ color: '#ec4899', fontSize: '12px', fontWeight: 'bold' }}
                                 labelStyle={{ color: '#666', marginBottom: '5px', fontSize: '10px', textTransform: 'uppercase' }}
                                 cursor={{stroke: '#ec4899', strokeWidth: 1}}
+                                formatter={(value: number) => [`₹${value.toLocaleString('en-IN')}`, 'Revenue']}
                             />
                             <Area type="monotone" dataKey="sales" stroke="#ec4899" fillOpacity={1} fill="url(#colorSales)" strokeWidth={4} />
                         </AreaChart>
