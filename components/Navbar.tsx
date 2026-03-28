@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { Home, ShoppingBag, User, ShoppingCart, LogOut, Heart, Search, X, Package } from 'lucide-react';
+import { Home, ShoppingBag, User, ShoppingCart, LogOut, Heart, Search, X, Package, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useTheme } from '../context/ThemeContext';
 
 export const Navbar: React.FC = () => {
   const { user, signOutUser } = useAuth();
   const { cart, setIsCartOpen } = useCart();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
@@ -98,6 +100,10 @@ export const Navbar: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-5">
+            <button onClick={toggleTheme} className="text-gray-400 hover:text-pudava-primary transition-colors" title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+              {theme === 'dark' ? <Sun size={18} strokeWidth={1.5} /> : <Moon size={18} strokeWidth={1.5} />}
+            </button>
+
             {!isSearchOpen && (
               <button onClick={() => setIsSearchOpen(true)} className="text-gray-400 hover:text-white transition-colors">
                 <Search size={18} strokeWidth={1.5} />
@@ -156,6 +162,9 @@ export const Navbar: React.FC = () => {
                 <h1 className="text-lg font-serif font-bold tracking-widest text-white">PUDAVA</h1>
               </button>
               <div className="flex items-center">
+                <button onClick={toggleTheme} className="w-11 h-11 flex items-center justify-center rounded-full text-white active:bg-white/10 transition-colors">
+                  {theme === 'dark' ? <Sun size={20} strokeWidth={1.5} /> : <Moon size={20} strokeWidth={1.5} />}
+                </button>
                 <button onClick={() => setIsSearchOpen(true)} className="w-11 h-11 flex items-center justify-center rounded-full text-white active:bg-white/10 transition-colors">
                   <Search size={20} strokeWidth={1.5} />
                 </button>

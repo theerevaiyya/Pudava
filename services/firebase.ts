@@ -38,7 +38,7 @@ import {
   increment,
   Timestamp
 } from "firebase/firestore";
-import { Product, UserRole, UserProfile, Address, Order, OrderItem, Review, WishlistItem, Coupon, Banner, Notification as AppNotification, OrderStatus } from "../types";
+import { Product, UserRole, UserProfile, Address, Order, OrderItem, Review, WishlistItem, Coupon, Banner, HomePageImages, Notification as AppNotification, OrderStatus } from "../types";
 
 
 const SYSTEM_ADMIN_EMAILS = ['latheeshk@gmail.com', 'latheeshkal202601@gmail.com'];
@@ -407,7 +407,14 @@ export const getOrderById = async (orderId: string): Promise<Order | null> => {
 export const updateOrderStatus = async (orderId: string, status: OrderStatus, trackingId?: string) => {
   const data: any = { status, updatedAt: serverTimestamp() };
   if (trackingId) data.trackingId = trackingId;
-  if (status === 'delivered') data.deliveredAt = serverTimestamp();
+  if (status === 'delivered') {
+    data.deliveredAt = serverTimestamp();
+    // Auto-mark COD orders as paid upon delivery
+    const orderSnap = await getDoc(doc(db, 'orders', orderId));
+    if (orderSnap.exists() && orderSnap.data().paymentMethod === 'cod') {
+      data.paymentStatus = 'paid';
+    }
+  }
   await updateDoc(doc(db, 'orders', orderId), data);
 };
 
@@ -518,6 +525,71 @@ export const getActiveBanners = async (): Promise<Banner[]> => {
   const q = query(collection(db, 'banners'), where('isActive', '==', true), orderBy('order', 'asc'));
   const snapshot = await getDocs(q);
   return snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Banner));
+};
+
+// ========================================
+// HOMEPAGE IMAGES
+// ========================================
+
+const DEFAULT_HOME_IMAGES: HomePageImages = {
+  hero: 'https://images.unsplash.com/photo-1583391733958-e026b143f282?q=80&w=1920&auto=format&fit=crop',
+  categoryWomen: 'https://images.unsplash.com/photo-1610030469983-98e55041d04f?q=80&w=1200',
+  categoryMen: 'https://images.unsplash.com/photo-1597983073493-88cd357a28e0?q=80&w=800',
+  categoryKids: 'https://images.unsplash.com/photo-1627885732159-4c8d28cb1745?q=80&w=800',
+  fabricHeritage: 'https://images.unsplash.com/photo-1610030469983-98e55041d04f?q=80&w=1000&auto=format&fit=crop',
+  fabricKanchipuram: 'https://images.unsplash.com/photo-1610030469983-98e55041d04f?q=80&w=600&auto=format&fit=crop',
+  fabricBanarasi: 'https://images.unsplash.com/photo-1583391733958-e026b143f282?q=80&w=600&auto=format&fit=crop',
+  fabricChanderi: 'https://images.unsplash.com/photo-1597983073493-88cd357a28e0?q=80&w=600&auto=format&fit=crop',
+  fabricPatola: 'https://images.unsplash.com/photo-1627885732159-4c8d28cb1745?q=80&w=600&auto=format&fit=crop',
+  fabricTussar: 'https://images.unsplash.com/photo-1610030469983-98e55041d04f?q=80&w=600&auto=format&fit=crop',
+  fabricMaheshwari: 'https://images.unsplash.com/photo-1583391733958-e026b143f282?q=80&w=600&auto=format&fit=crop',
+};
+
+export const getHomePageImages = async (): Promise<HomePageImages> => {
+  const snap = await getDoc(doc(db, 'settings', 'homepage'));
+  if (snap.exists()) {
+    return { ...DEFAULT_HOME_IMAGES, ...snap.data() } as HomePageImages;
+  }
+  return DEFAULT_HOME_IMAGES;
+};
+
+export const saveHomePageImages = async (images: Partial<HomePageImages>): Promise<void> => {
+  await setDoc(doc(db, 'settings', 'homepage'), images, { merge: true });
+};
+
+export const uploadHomeImage = async (
+  file: File,
+  slot: string,
+  onProgress?: UploadProgressCallback
+): Promise<string> => {
+  const ext = file.name.split('.').pop() || 'jpg';
+  const timestamp = Date.now();
+  const safeName = `${timestamp}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const key = `homepage/${slot}/${safeName}`;
+
+  const presignRes = await fetch('/api/s3/presign', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-upload-secret': UPLOAD_SECRET,
+    },
+    body: JSON.stringify({ key, contentType: file.type }),
+  });
+
+  if (!presignRes.ok) throw new Error('Failed to get upload URL');
+  const { presignedUrl, publicUrl } = await presignRes.json();
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', presignedUrl, true);
+    xhr.setRequestHeader('Content-Type', file.type);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress?.((e.loaded / e.total) * 100);
+    };
+    xhr.onload = () => xhr.status >= 200 && xhr.status < 300 ? resolve(publicUrl) : reject(new Error(`Upload failed: ${xhr.status}`));
+    xhr.onerror = () => reject(new Error('Upload network error'));
+    xhr.send(file);
+  });
 };
 
 // ========================================

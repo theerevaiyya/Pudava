@@ -170,6 +170,20 @@ export interface Banner {
   order: number;
 }
 
+export interface HomePageImages {
+  hero: string;
+  categoryWomen: string;
+  categoryMen: string;
+  categoryKids: string;
+  fabricHeritage: string;
+  fabricKanchipuram: string;
+  fabricBanarasi: string;
+  fabricChanderi: string;
+  fabricPatola: string;
+  fabricTussar: string;
+  fabricMaheshwari: string;
+}
+
 export interface Notification {
   id: string;
   userId: string;

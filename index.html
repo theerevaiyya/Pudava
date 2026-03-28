@@ -403,6 +403,56 @@
       width: max-content;
     }
 
+    /* Aurora wave — horizontal drift */
+    @keyframes auroraWave1 {
+      0%, 100% { transform: translateX(-15%) skewY(-2deg); }
+      50% { transform: translateX(15%) skewY(2deg); }
+    }
+    @keyframes auroraWave2 {
+      0%, 100% { transform: translateX(10%) skewY(1deg); }
+      50% { transform: translateX(-10%) skewY(-1deg); }
+    }
+
+    /* Twinkling stars */
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* Diamond float paths */
+    @keyframes diamondFloat1 {
+      0%, 100% { transform: rotate(45deg) translate(0, 0); }
+      25% { transform: rotate(135deg) translate(20px, -30px); }
+      50% { transform: rotate(225deg) translate(-10px, -50px); }
+      75% { transform: rotate(315deg) translate(15px, -20px); }
+    }
+    @keyframes diamondFloat2 {
+      0%, 100% { transform: rotate(45deg) translate(0, 0); }
+      30% { transform: rotate(180deg) translate(-25px, -15px); }
+      60% { transform: rotate(270deg) translate(10px, -40px); }
+      85% { transform: rotate(360deg) translate(-5px, -10px); }
+    }
+    @keyframes diamondFloat3 {
+      0%, 100% { transform: rotate(45deg) translate(0, 0); }
+      20% { transform: rotate(100deg) translate(15px, -35px); }
+      50% { transform: rotate(200deg) translate(-20px, -25px); }
+      80% { transform: rotate(340deg) translate(10px, -45px); }
+    }
+
+    /* Meteor shoot — diagonal streak across viewport */
+    @keyframes meteorShoot {
+      0% { transform: rotate(-35deg) translateX(-100px); opacity: 0; }
+      5% { opacity: 1; }
+      30% { opacity: 1; }
+      100% { transform: rotate(-35deg) translateX(calc(100vw + 200px)); opacity: 0; }
+    }
+
+    /* Ring expand — grows and fades out from hero center */
+    @keyframes ringExpand {
+      0% { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+
     /* Reduce motion for accessibility */
     @media (prefers-reduced-motion: reduce) {
       .animate-marquee,
@@ -410,6 +460,211 @@
         animation-play-state: paused !important;
       }
     }
+
+    /* ===================================================================
+       LIGHT THEME — "Ivory Bloom"
+       Warm ivory base, frosted white glass, deep rose & violet accents
+       =================================================================== */
+
+    /* Smooth transition for theme switching */
+    html { transition: background-color 0.4s ease, color 0.4s ease; }
+
+    /* ---- Body & root-level overrides ---- */
+    [data-theme="light"] body {
+      background-color: #faf7f2 !important;
+      color: #1f1217 !important;
+    }
+
+    [data-theme="light"] .nebula-bg {
+      background:
+        radial-gradient(circle at 20% 30%, rgba(190, 24, 93, 0.04), transparent 35%),
+        radial-gradient(circle at 80% 70%, rgba(124, 58, 237, 0.04), transparent 35%) !important;
+    }
+
+    /* ---- Glass morphism — frosted white ---- */
+    [data-theme="light"] .glass-panel {
+      background: rgba(255, 255, 255, 0.75) !important;
+      border-color: rgba(0, 0, 0, 0.07) !important;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05) !important;
+      backdrop-filter: blur(40px) !important;
+      -webkit-backdrop-filter: blur(40px) !important;
+    }
+
+    /* ---- Gradients ---- */
+    [data-theme="light"] .orchid-gradient {
+      background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%) !important;
+    }
+    [data-theme="light"] .orchid-text-gradient {
+      background: linear-gradient(to right, #be185d, #7c3aed) !important;
+      -webkit-background-clip: text !important;
+      background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+    }
+    [data-theme="light"] .gradient-border::before {
+      background: linear-gradient(135deg, rgba(190, 24, 93, 0.25), rgba(124, 58, 237, 0.25)) !important;
+    }
+
+    /* ---- Text color inversions ---- */
+    [data-theme="light"] .text-white { color: #1f1217 !important; }
+    [data-theme="light"] .text-gray-100 { color: #2d1f25 !important; }
+    [data-theme="light"] .text-gray-200 { color: #3d2f35 !important; }
+    [data-theme="light"] .text-gray-300 { color: #5a4a52 !important; }
+    [data-theme="light"] .text-gray-400 { color: #6b5c63 !important; }
+    [data-theme="light"] .text-gray-500 { color: #8a7b83 !important; }
+    [data-theme="light"] .text-gray-600 { color: #a09498 !important; }
+    [data-theme="light"] .text-gray-700 { color: #b8adb2 !important; }
+
+    /* Keep explicit white text white where it overlays images */
+    [data-theme="light"] [class*="absolute"] .text-white,
+    [data-theme="light"] .orchid-gradient .text-white,
+    [data-theme="light"] [class*="bg-gradient"] .text-white {
+      color: #ffffff !important;
+    }
+
+    /* ---- Background color inversions ---- */
+    [data-theme="light"] .bg-pudava-bg { background-color: #faf7f2 !important; }
+    [data-theme="light"] .bg-pudava-surface { background-color: #ffffff !important; }
+    [data-theme="light"] .bg-pudava-bg\/90 { background-color: rgba(250, 247, 242, 0.9) !important; }
+    [data-theme="light"] .bg-pudava-bg\/95 { background-color: rgba(250, 247, 242, 0.95) !important; }
+
+    /* Hardcoded dark hex backgrounds */
+    [data-theme="light"] .bg-\[\#05010d\] { background-color: #faf7f2 !important; }
+    [data-theme="light"] .bg-\[\#0d041a\] { background-color: #ffffff !important; }
+    [data-theme="light"] .bg-\[\#0a0118\] { background-color: #f5f0eb !important; }
+    [data-theme="light"] .bg-\[\#05010d\]\/60 { background-color: rgba(250, 247, 242, 0.5) !important; }
+
+    /* White-opacity backgrounds → dark-opacity */
+    [data-theme="light"] .bg-white\/5 { background-color: rgba(0, 0, 0, 0.03) !important; }
+    [data-theme="light"] .bg-white\/10 { background-color: rgba(0, 0, 0, 0.04) !important; }
+    [data-theme="light"] .bg-white\/20 { background-color: rgba(0, 0, 0, 0.06) !important; }
+    [data-theme="light"] .bg-white\/\[0\.02\] { background-color: rgba(0, 0, 0, 0.015) !important; }
+    [data-theme="light"] .bg-white\/\[0\.04\] { background-color: rgba(0, 0, 0, 0.025) !important; }
+
+    /* Black-opacity backgrounds → lighter */
+    [data-theme="light"] .bg-black\/30 { background-color: rgba(0, 0, 0, 0.06) !important; }
+    [data-theme="light"] .bg-black\/60 { background-color: rgba(0, 0, 0, 0.15) !important; }
+    [data-theme="light"] .bg-black\/70 { background-color: rgba(0, 0, 0, 0.2) !important; }
+
+    /* Surface/50 for footer */
+    [data-theme="light"] .bg-pudava-surface\/50 { background-color: rgba(255, 255, 255, 0.6) !important; }
+
+    /* ---- Border inversions ---- */
+    [data-theme="light"] .border-white\/5 { border-color: rgba(0, 0, 0, 0.06) !important; }
+    [data-theme="light"] .border-white\/10 { border-color: rgba(0, 0, 0, 0.08) !important; }
+    [data-theme="light"] .border-white\/20 { border-color: rgba(0, 0, 0, 0.1) !important; }
+    [data-theme="light"] .border-l-white\/5 { border-left-color: rgba(0, 0, 0, 0.06) !important; }
+
+    /* ---- Gradient overlays on images — keep dark for readability ---- */
+    [data-theme="light"] .from-\[\#05010d\] { --tw-gradient-from: rgba(31, 18, 23, 0.9) !important; }
+    [data-theme="light"] .from-\[\#05010d\]\/80 { --tw-gradient-from: rgba(31, 18, 23, 0.65) !important; }
+    [data-theme="light"] .to-\[\#05010d\] { --tw-gradient-to: #faf7f2 !important; }
+
+    /* ---- Shadow adjustments ---- */
+    [data-theme="light"] .shadow-2xl { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important; }
+    [data-theme="light"] .shadow-xl { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06) !important; }
+    [data-theme="light"] .shadow-black\/60 { --tw-shadow-color: rgba(0, 0, 0, 0.08) !important; }
+
+    /* Card glow — subtle warm glow */
+    @media (hover: hover) {
+      [data-theme="light"] .card-glow:hover {
+        box-shadow: 0 12px 40px rgba(190, 24, 93, 0.08) !important;
+      }
+    }
+
+    /* ---- Input overrides ---- */
+    [data-theme="light"] input,
+    [data-theme="light"] textarea,
+    [data-theme="light"] select {
+      color: #1f1217 !important;
+    }
+    [data-theme="light"] input::placeholder,
+    [data-theme="light"] textarea::placeholder {
+      color: #a09498 !important;
+    }
+    [data-theme="light"] input:focus,
+    [data-theme="light"] textarea:focus {
+      box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2) !important;
+    }
+
+    /* ---- Button overrides ---- */
+    /* Primary button: white-on-dark becomes dark-on-white */
+    [data-theme="light"] .bg-white.text-black {
+      background-color: #1f1217 !important;
+      color: #ffffff !important;
+    }
+    [data-theme="light"] .bg-white.text-black:hover {
+      background-color: #2d1f25 !important;
+    }
+
+    /* ---- Scrollbar (for webkit browsers) ---- */
+    [data-theme="light"] ::-webkit-scrollbar { width: 8px; }
+    [data-theme="light"] ::-webkit-scrollbar-track { background: #f5f0eb; }
+    [data-theme="light"] ::-webkit-scrollbar-thumb { background: #d4c9c0; border-radius: 4px; }
+    [data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #b8aaa0; }
+
+    /* ---- Mobile dock active dot ---- */
+    [data-theme="light"] .dock-active::after {
+      background: linear-gradient(135deg, #be185d, #7c3aed) !important;
+      box-shadow: 0 0 6px rgba(190, 24, 93, 0.4) !important;
+    }
+
+    /* ---- Selection color ---- */
+    [data-theme="light"] ::selection {
+      background: rgba(124, 58, 237, 0.2) !important;
+      color: #1f1217 !important;
+    }
+
+    /* ---- Skeleton shimmer ---- */
+    [data-theme="light"] .skeleton-shimmer {
+      background: rgba(0, 0, 0, 0.04) !important;
+    }
+    [data-theme="light"] .skeleton-shimmer::after {
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.04), transparent) !important;
+    }
+
+    /* ---- Homepage animations — soften on light theme ---- */
+    [data-theme="light"] [style*="position: fixed"][style*="pointer-events: none"] {
+      opacity: 0.3 !important;
+    }
+
+    /* ---- Divider line color ---- */
+    [data-theme="light"] .bg-white\/20 { background-color: rgba(0, 0, 0, 0.08) !important; }
+    [data-theme="light"] .h-3.w-px { background-color: rgba(0, 0, 0, 0.12) !important; }
+
+    /* ---- Search box specific (Navbar) ---- */
+    [data-theme="light"] .focus\:border-pudava-secondary\/50:focus { border-color: rgba(124, 58, 237, 0.4) !important; }
+
+    /* ---- Hover states ---- */
+    [data-theme="light"] .hover\:bg-white\/5:hover { background-color: rgba(0, 0, 0, 0.03) !important; }
+    [data-theme="light"] .hover\:bg-white\/10:hover { background-color: rgba(0, 0, 0, 0.05) !important; }
+    [data-theme="light"] .hover\:border-white\/20:hover { border-color: rgba(0, 0, 0, 0.1) !important; }
+    [data-theme="light"] .hover\:text-white:hover { color: #1f1217 !important; }
+
+    /* Gradient 'from-pudava-bg' for Navbar mobile */
+    [data-theme="light"] .from-pudava-bg\/90 { --tw-gradient-from: rgba(250, 247, 242, 0.9) !important; }
+
+    /* ---- Status badge colors — keep readable ---- */
+    [data-theme="light"] .text-green-400 { color: #15803d !important; }
+    [data-theme="light"] .text-yellow-400 { color: #a16207 !important; }
+    [data-theme="light"] .text-red-400 { color: #dc2626 !important; }
+    [data-theme="light"] .text-red-500 { color: #b91c1c !important; }
+    [data-theme="light"] .text-orange-400 { color: #c2410c !important; }
+    [data-theme="light"] .text-blue-400 { color: #1d4ed8 !important; }
+    [data-theme="light"] .bg-green-500\/20 { background-color: rgba(21, 128, 61, 0.12) !important; }
+    [data-theme="light"] .bg-red-500\/20 { background-color: rgba(220, 38, 38, 0.12) !important; }
+    [data-theme="light"] .bg-orange-500\/20 { background-color: rgba(234, 88, 12, 0.12) !important; }
+    [data-theme="light"] .bg-red-500\/10 { background-color: rgba(220, 38, 38, 0.08) !important; }
+
+    /* SplashScreen stroke color — keep visible */
+    [data-theme="light"] .stroke-text {
+      stroke: #be185d !important;
+    }
+
+    /* ---- Misc ---- */
+    [data-theme="light"] .bg-gradient-to-b.from-transparent.to-transparent { background: none !important; }
+    [data-theme="light"] .backdrop-blur-md { backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important; }
+    [data-theme="light"] .backdrop-blur-xl { backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important; }
+    [data-theme="light"] .backdrop-blur-3xl { backdrop-filter: blur(40px) !important; -webkit-backdrop-filter: blur(40px) !important; }
   </style>
   <script type="importmap">
 {

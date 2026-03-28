@@ -3,10 +3,10 @@ import { useAuth } from '../context/AuthContext';
 import { GlassCard } from '../components/GlassCard';
 import { Button } from '../components/Button';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, AreaChart, Area } from 'recharts';
-import { Users, DollarSign, Package, TrendingUp, Settings, LogOut, Plus, Edit, Trash, Check, UserCircle, Shield, Briefcase, AlertTriangle, Filter, Lock, Activity, Search, Eye, EyeOff, MoreVertical, ClipboardList, ChevronDown, Truck, XCircle } from 'lucide-react';
+import { Users, DollarSign, Package, TrendingUp, Settings, LogOut, Plus, Edit, Trash, Check, UserCircle, Shield, Briefcase, AlertTriangle, Filter, Lock, Activity, Search, Eye, EyeOff, MoreVertical, ClipboardList, ChevronDown, Truck, XCircle, ImageIcon, Upload, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { getAllUsers, updateUserRole, deleteUserDocument, getProducts, saveProduct, deleteProduct, getAllOrders, updateOrderStatus } from '../services/firebase';
-import { UserProfile, UserRole, Product, Order, OrderStatus } from '../types';
+import { getAllUsers, updateUserRole, deleteUserDocument, getProducts, saveProduct, deleteProduct, getAllOrders, updateOrderStatus, getHomePageImages, saveHomePageImages, uploadHomeImage } from '../services/firebase';
+import { UserProfile, UserRole, Product, Order, OrderStatus, HomePageImages } from '../types';
 import { ProductForm } from '../components/ProductForm';
 
 const PROTECTED_ADMIN_EMAILS = ['latheeshk@gmail.com', 'latheeshkal202601@gmail.com'];
@@ -515,7 +515,12 @@ const OrderManagement = () => {
         try {
             const trackingId = trackingInputs[orderId]?.trim() || undefined;
             await updateOrderStatus(orderId, newStatus, newStatus === 'shipped' ? trackingId : undefined);
-            setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus, ...(trackingId && newStatus === 'shipped' ? { trackingId } : {}) } : o));
+            setOrders(prev => prev.map(o => o.id === orderId ? {
+                ...o,
+                status: newStatus,
+                ...(trackingId && newStatus === 'shipped' ? { trackingId } : {}),
+                ...(newStatus === 'delivered' && o.paymentMethod === 'cod' ? { paymentStatus: 'paid' as const } : {}),
+            } : o));
         } catch (e) {
             console.error('Failed to update order status:', e);
             alert('Failed to update order status.');
@@ -683,7 +688,7 @@ const OrderManagement = () => {
                                         {/* Payment info */}
                                         <div className="flex items-center gap-6 text-xs text-gray-400">
                                             <span>Payment: <span className="text-white font-medium uppercase">{order.paymentMethod}</span></span>
-                                            <span>Status: <span className={`font-medium ${order.paymentStatus === 'paid' ? 'text-green-400' : 'text-yellow-400'}`}>{order.paymentStatus}</span></span>
+                                            <span>Payment Status: <span className={`font-medium ${order.paymentStatus === 'paid' ? 'text-green-400' : 'text-yellow-400'}`}>{order.paymentStatus}</span></span>
                                             {order.razorpayPaymentId && <span>Razorpay: <span className="text-white font-mono text-[10px]">{order.razorpayPaymentId}</span></span>}
                                             {order.trackingId && <span>Tracking: <span className="text-white font-medium">{order.trackingId}</span></span>}
                                         </div>
@@ -732,7 +737,7 @@ const OrderManagement = () => {
     );
 };
 
-const UserProfileView = ({ user, signOutUser }: any) => (
+const UserProfileView = ({ user, signOutUser, navigate }: any) => (
     <div className="max-w-4xl mx-auto space-y-6 animate-fade-in-blur">
         <GlassCard className="p-6 md:p-10 text-center space-y-5 relative overflow-hidden border-t-4 border-t-pudava-primary/20">
              <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-pudava-primary/5 to-transparent"></div>
@@ -748,7 +753,7 @@ const UserProfileView = ({ user, signOutUser }: any) => (
                     </div>
                 </div>
                 <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
-                    <Button variant="orchid" className="px-8 h-10 text-sm">Edit Profile</Button>
+                    <Button variant="orchid" onClick={() => navigate('/profile')} className="px-8 h-10 text-sm">Edit Profile</Button>
                     <Button variant="secondary" onClick={signOutUser} className="px-8 h-10 text-sm text-red-400 border-red-500/20 hover:bg-red-500/10">Sign Out</Button>
                 </div>
             </div>
@@ -765,15 +770,17 @@ const UserProfileView = ({ user, signOutUser }: any) => (
             </GlassCard>
             <GlassCard className="p-5 group hover:border-pudava-secondary/20 transition-all duration-700">
                 <h3 className="text-lg font-serif mb-4 flex items-center gap-3">
-                    <Settings size={20} className="text-pudava-secondary" /> Settings
+                    <Settings size={20} className="text-pudava-secondary" /> Quick Links
                 </h3>
                  <div className="space-y-2">
-                    {["Push Notifications", "Language", "Currency"].map((setting, i) => (
-                         <div key={i} className="flex justify-between items-center p-3 hover:bg-white/5 rounded-xl cursor-pointer group/item transition-all">
-                            <span className="text-gray-400 text-sm group-hover/item:text-white transition-colors font-medium tracking-wide">{setting}</span>
-                            <div className="w-10 h-5 bg-white/10 rounded-full relative transition-all overflow-hidden border border-white/5">
-                                <div className="w-3.5 h-3.5 bg-pudava-primary rounded-full absolute top-[3px] left-[3px] group-hover/item:left-[19px] transition-all shadow-lg"></div>
-                            </div>
+                    {[
+                      { label: "Edit Profile", path: "/profile" },
+                      { label: "My Orders", path: "/orders" },
+                      { label: "My Wishlist", path: "/wishlist" },
+                    ].map((item, i) => (
+                         <div key={i} onClick={() => navigate(item.path)} className="flex justify-between items-center p-3 hover:bg-white/5 rounded-xl cursor-pointer group/item transition-all">
+                            <span className="text-gray-400 text-sm group-hover/item:text-white transition-colors font-medium tracking-wide">{item.label}</span>
+                            <span className="text-gray-600 group-hover/item:text-pudava-primary transition-colors text-xs">→</span>
                         </div>
                     ))}
                  </div>
@@ -782,9 +789,130 @@ const UserProfileView = ({ user, signOutUser }: any) => (
     </div>
 );
 
+// ========================================
+// HOMEPAGE IMAGE MANAGEMENT
+// ========================================
+const IMAGE_SLOTS: { key: keyof HomePageImages; label: string }[] = [
+    { key: 'hero', label: 'Hero Banner' },
+    { key: 'categoryWomen', label: 'Women Category' },
+    { key: 'categoryMen', label: 'Men Category' },
+    { key: 'categoryKids', label: 'Kids Category' },
+    { key: 'fabricHeritage', label: 'Fabric Heritage' },
+    { key: 'fabricKanchipuram', label: 'Kanchipuram Silk' },
+    { key: 'fabricBanarasi', label: 'Banarasi Brocade' },
+    { key: 'fabricChanderi', label: 'Chanderi Weave' },
+    { key: 'fabricPatola', label: 'Patola Silk' },
+    { key: 'fabricTussar', label: 'Tussar Silk' },
+    { key: 'fabricMaheshwari', label: 'Maheshwari Cotton' },
+];
+
+const HomepageManager = () => {
+    const [images, setImages] = useState<HomePageImages | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [uploading, setUploading] = useState<string | null>(null);
+    const [progress, setProgress] = useState(0);
+    const [saveStatus, setSaveStatus] = useState<string | null>(null);
+
+    useEffect(() => {
+        getHomePageImages().then(imgs => { setImages(imgs); setLoading(false); });
+    }, []);
+
+    const handleUpload = async (slot: keyof HomePageImages, file: File) => {
+        if (!images) return;
+        setUploading(slot);
+        setProgress(0);
+        try {
+            const url = await uploadHomeImage(file, slot, p => setProgress(p));
+            const updated = { ...images, [slot]: url };
+            setImages(updated);
+            await saveHomePageImages({ [slot]: url });
+            setSaveStatus(`${slot} updated!`);
+            setTimeout(() => setSaveStatus(null), 2000);
+        } catch (e: any) {
+            setSaveStatus(`Error: ${e.message}`);
+            setTimeout(() => setSaveStatus(null), 3000);
+        } finally {
+            setUploading(null);
+            setProgress(0);
+        }
+    };
+
+    if (loading) return (
+        <div className="flex items-center justify-center py-20">
+            <div className="w-10 h-10 border-2 border-pudava-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+    );
+
+    return (
+        <div className="space-y-6 animate-fade-in-blur">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h2 className="text-xl md:text-2xl font-serif">Homepage Images</h2>
+                    <p className="text-gray-500 text-xs mt-1">Click any image to upload a replacement</p>
+                </div>
+                {saveStatus && (
+                    <div className={`px-4 py-2 rounded-xl text-xs font-bold ${saveStatus.startsWith('Error') ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}`}>
+                        {saveStatus}
+                    </div>
+                )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {IMAGE_SLOTS.map(({ key, label }) => (
+                    <GlassCard key={key} className="p-0 overflow-hidden group relative">
+                        <div className="relative aspect-[16/10] bg-pudava-surface">
+                            <img
+                                src={images?.[key] || ''}
+                                alt={label}
+                                className="w-full h-full object-cover"
+                            />
+                            {uploading === key && (
+                                <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-3">
+                                    <div className="w-10 h-10 border-2 border-pudava-primary border-t-transparent rounded-full animate-spin"></div>
+                                    <span className="text-xs text-white font-bold">{Math.round(progress)}%</span>
+                                    <div className="w-3/4 h-1 bg-white/20 rounded-full overflow-hidden">
+                                        <div className="h-full orchid-gradient rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+                                    </div>
+                                </div>
+                            )}
+                            {uploading !== key && (
+                                <label className="absolute inset-0 flex flex-col items-center justify-center bg-black/0 group-hover:bg-black/60 transition-all cursor-pointer">
+                                    <div className="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center gap-2">
+                                        <div className="p-3 rounded-2xl orchid-gradient shadow-xl">
+                                            <Upload size={20} className="text-white" />
+                                        </div>
+                                        <span className="text-xs text-white font-bold">Replace Image</span>
+                                    </div>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={e => {
+                                            const f = e.target.files?.[0];
+                                            if (f) handleUpload(key, f);
+                                            e.target.value = '';
+                                        }}
+                                    />
+                                </label>
+                            )}
+                        </div>
+                        <div className="p-3 flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-white">{label}</p>
+                                <p className="text-[10px] text-gray-500 mt-0.5 uppercase tracking-wider">{key}</p>
+                            </div>
+                            <ImageIcon size={16} className="text-gray-600" />
+                        </div>
+                    </GlassCard>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 export const Dashboard: React.FC = () => {
     const { user, loading, signOutUser } = useAuth();
-    const [activeTab, setActiveTab] = useState<'profile' | 'overview' | 'inventory' | 'users' | 'orders'>('profile');
+    const [activeTab, setActiveTab] = useState<'profile' | 'overview' | 'inventory' | 'users' | 'orders' | 'homepage'>('profile');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -845,15 +973,24 @@ export const Dashboard: React.FC = () => {
                             <Shield size={20} /> Users
                         </button>
                     )}
+                    {isAdmin && (
+                        <button 
+                            onClick={() => setActiveTab('homepage')}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === 'homepage' ? 'orchid-gradient text-white shadow-2xl' : 'text-gray-500 hover:text-white'}`}
+                        >
+                            <ImageIcon size={20} /> Homepage
+                        </button>
+                    )}
                 </div>
             )}
 
             <div className="min-h-[70vh]">
-                {activeTab === 'profile' && <UserProfileView user={user} signOutUser={signOutUser} />}
+                {activeTab === 'profile' && <UserProfileView user={user} signOutUser={signOutUser} navigate={navigate} />}
                 {activeTab === 'overview' && isAdmin && <AdminOverview />}
                 {activeTab === 'orders' && isManager && <OrderManagement />}
                 {activeTab === 'users' && isAdmin && <UserManagement />}
                 {activeTab === 'inventory' && isManager && <InventoryManagement />}
+                {activeTab === 'homepage' && isAdmin && <HomepageManager />}
             </div>
         </div>
     );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/Toast';
 import { Navbar } from './components/Navbar';
 import { CartSidebar } from './components/CartSidebar';
@@ -93,6 +94,7 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
+    <ThemeProvider>
     <AuthProvider>
       <CartProvider>
         <ToastProvider>
@@ -100,6 +102,7 @@ const App: React.FC = () => {
         </ToastProvider>
       </CartProvider>
     </AuthProvider>
+    </ThemeProvider>
   );
 };
 
