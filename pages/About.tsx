@@ -33,7 +33,7 @@ It is a place. A moment. A memory waiting to be worn.</p>
                     <div className="grid md:grid-cols-2 gap-4 text-base">
                         <div className="bg-white/5 p-4 rounded-lg">
                             <h3 className="font-bold text-pudava-secondary">Address</h3>
-                            <p>1Pudava<br/>B1, 1111, Mahaveer Promenade<br/> Belathur Main Road, Kadugodi<br/>Bangalore, KA 560067</p>
+                            <p>Pudava<br/>B1, 1111, Mahaveer Promenade<br/> Belathur Main Road, Kadugodi<br/>Bangalore, KA 560067</p>
                         </div>
                         <div className="bg-white/5 p-4 rounded-lg">
                             <h3 className="font-bold text-pudava-secondary">Support</h3>
