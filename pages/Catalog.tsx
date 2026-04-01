@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db, seedProductsIfEmpty, addToWishlist, removeFromWishlist, isInWishlist } from '../services/firebase';
+import { db, addToWishlist, removeFromWishlist, isInWishlist } from '../services/firebase';
 import { Product } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -23,7 +23,6 @@ export const Catalog: React.FC = () => {
     const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
     const [showFilters, setShowFilters] = useState(false);
     const [showSort, setShowSort] = useState(false);
-    const [seeding, setSeeding] = useState(false);
     const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
 
     const { user } = useAuth();
@@ -36,7 +35,6 @@ export const Catalog: React.FC = () => {
 
     const fetchProducts = async () => {
         setLoading(true);
-        seedProductsIfEmpty().catch(() => {});
         try {
             const snapshot = await getDocs(collection(db, 'products'));
             const fetched: Product[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
@@ -115,22 +113,6 @@ export const Catalog: React.FC = () => {
         } else {
             await addToWishlist(user.uid, product.id);
             setWishlistIds(prev => new Set(prev).add(product.id));
-        }
-    };
-
-    const handleManualSeed = async () => {
-        setSeeding(true);
-        try {
-            const result = await seedProductsIfEmpty();
-            if (result) {
-                setTimeout(() => window.location.reload(), 1500);
-            } else {
-                alert("Database already has data or permission was denied.");
-            }
-        } catch {
-            alert("Failed to seed data. Ensure you are logged in.");
-        } finally {
-            setSeeding(false);
         }
     };
 
@@ -338,13 +320,6 @@ export const Catalog: React.FC = () => {
             {!loading && filteredProducts.length === 0 && (
                 <div className="text-center py-20 flex flex-col items-center gap-4">
                     <p className="text-lg text-gray-500">No products found.</p>
-                    {products.length === 0 && (
-                        <div className="flex flex-col items-center gap-2">
-                            <Button onClick={handleManualSeed} variant="outline" disabled={seeding} className="text-sm py-2 px-4">
-                                {seeding ? 'Initializing...' : 'Initialize Test Data'}
-                            </Button>
-                        </div>
-                    )}
                 </div>
             )}
         </div>

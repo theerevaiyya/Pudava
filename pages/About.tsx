@@ -30,12 +30,12 @@ export const About: React.FC = () => {
                     <h2 className="text-2xl font-bold text-white mt-5 mb-3">Contact Us</h2>
                     <div className="grid md:grid-cols-2 gap-4 text-base">
                         <div className="bg-white/5 p-4 rounded-lg">
-                            <h3 className="font-bold text-pudava-secondary">Studio Address</h3>
-                            <p>12/A, Heritage Lane, Indiranagar<br/>Bangalore, KA 560038</p>
+                            <h3 className="font-bold text-pudava-secondary">Address</h3>
+                            <p>1Pudava<br/>B1, 1111, Mahaveer Promenade<br/> Belathur Main Road, Kadugodi<br/>Bangalore, KA 560067</p>
                         </div>
                         <div className="bg-white/5 p-4 rounded-lg">
                             <h3 className="font-bold text-pudava-secondary">Support</h3>
-                            <p>hello@pudava.style<br/>+91 98765 43210</p>
+                            <p>pudava.in@gmail.com<br/>+91 7899418275</p>
                         </div>
                     </div>
                 </div>
